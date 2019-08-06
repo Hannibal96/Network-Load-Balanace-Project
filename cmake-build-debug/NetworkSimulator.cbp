@@ -83,6 +83,9 @@
 		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.cpp">
 			<Option target="NetworkSimulator"/>
 		</Unit>
+		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h">
+			<Option target="NetworkSimulator"/>
+		</Unit>
 		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.cpp">
 			<Option target="NetworkSimulator"/>
 		</Unit>

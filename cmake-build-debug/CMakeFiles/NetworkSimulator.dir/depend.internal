@@ -3,9 +3,13 @@
 
 CMakeFiles/NetworkSimulator.dir/Job.cpp.obj
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.cpp
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
 CMakeFiles/NetworkSimulator.dir/Server.cpp.obj
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.cpp
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
 CMakeFiles/NetworkSimulator.dir/main.cpp.obj
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/main.cpp

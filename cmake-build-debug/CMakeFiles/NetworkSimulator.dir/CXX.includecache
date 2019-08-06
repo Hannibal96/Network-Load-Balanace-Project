@@ -6,16 +6,44 @@
 
 #IncludeRegexTransform: 
 
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.cpp
+defs.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
+Job.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
+
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
+
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.cpp
 Server.h
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
 
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
+defs.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
+Job.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
 
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
-stdio.h
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/stdio.h
+stdlib.h
+-
 iostream
+-
+random
+-
+queue
+-
+algorithm
+-
+fstream
+-
+assert.h
+-
+math.h
+-
+string
+-
+unordered_map
 -
 
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/main.cpp
