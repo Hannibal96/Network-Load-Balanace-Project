@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.cpp
+Server.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
+
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
+
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
+stdio.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/stdio.h
+iostream
+-
+
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/main.cpp
+defs.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
+
