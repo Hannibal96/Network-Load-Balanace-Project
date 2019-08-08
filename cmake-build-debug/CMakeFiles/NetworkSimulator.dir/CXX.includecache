@@ -6,13 +6,19 @@
 
 #IncludeRegexTransform: 
 
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h
+defs.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
+MinHeap.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/MinHeap.h
+
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
 defs.h
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
 
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.cpp
-Server.h
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/MinHeap.h
+defs.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
 
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
 defs.h
@@ -43,4 +49,14 @@ unordered_map
 -
 limits
 -
+
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/main.cpp
+defs.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
+Server.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
+Dispacher.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h
+Job.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
 

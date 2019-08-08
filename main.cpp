@@ -6,16 +6,18 @@
 #include "Dispacher.h"
 #include "Job.h"
 
-#define TIME 10
+#define TIME 100000
 #define SERVERS_NUM 3
+#define GAMMA 10
+#define MU 0.3
 
 int main(int argc, char *argv[]) {
 
-    Dispatcher disp = Dispatcher(0, 3, 1);
+    Dispatcher disp = Dispatcher(0, SERVERS_NUM, GAMMA);
 
     Server** servers = new Server*[SERVERS_NUM];
     for(int n=0; n<SERVERS_NUM; n++){
-        servers[n] = new Server(n, 0.5);
+        servers[n] = new Server(n, MU);
     }
 
     for (int t = 0; t < TIME; t++) {
@@ -30,10 +32,12 @@ int main(int argc, char *argv[]) {
             servers[n]->FinishJob(t);
         }
 
-        cout << "====================" << endl;
-        cout << "Time: " << t << endl;
+        //cout << "====================" << endl;
+        //cout << "Time: " << t << endl;
         for(int n=0; n<SERVERS_NUM; n++){
-            cout << servers[n]->toString() << endl;
+            //cout << servers[n]->toString() << endl;
         }
     }
+    for(int n=0; n<SERVERS_NUM; n++)
+        cout << servers[n]->toString() << endl;
 }
