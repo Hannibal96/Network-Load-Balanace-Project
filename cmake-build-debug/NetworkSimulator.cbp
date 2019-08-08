@@ -80,10 +80,22 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.cpp">
+			<Option target="NetworkSimulator"/>
+		</Unit>
+		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h">
+			<Option target="NetworkSimulator"/>
+		</Unit>
 		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.cpp">
 			<Option target="NetworkSimulator"/>
 		</Unit>
 		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h">
+			<Option target="NetworkSimulator"/>
+		</Unit>
+		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/MinHeap.cpp">
+			<Option target="NetworkSimulator"/>
+		</Unit>
+		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/MinHeap.h">
 			<Option target="NetworkSimulator"/>
 		</Unit>
 		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.cpp">

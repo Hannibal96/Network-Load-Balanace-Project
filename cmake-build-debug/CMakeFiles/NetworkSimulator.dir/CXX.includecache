@@ -6,13 +6,9 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.cpp
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
 defs.h
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
-Job.h
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
-
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
 
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.cpp
 Server.h
@@ -45,8 +41,6 @@ string
 -
 unordered_map
 -
-
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/main.cpp
-defs.h
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
+limits
+-
 

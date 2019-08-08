@@ -122,6 +122,33 @@ NetworkSimulator/fast:
 	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/build
 .PHONY : NetworkSimulator/fast
 
+Dispacher.obj: Dispacher.cpp.obj
+
+.PHONY : Dispacher.obj
+
+# target to build an object file
+Dispacher.cpp.obj:
+	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj
+.PHONY : Dispacher.cpp.obj
+
+Dispacher.i: Dispacher.cpp.i
+
+.PHONY : Dispacher.i
+
+# target to preprocess a source file
+Dispacher.cpp.i:
+	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.i
+.PHONY : Dispacher.cpp.i
+
+Dispacher.s: Dispacher.cpp.s
+
+.PHONY : Dispacher.s
+
+# target to generate assembly for a file
+Dispacher.cpp.s:
+	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.s
+.PHONY : Dispacher.cpp.s
+
 Job.obj: Job.cpp.obj
 
 .PHONY : Job.obj
@@ -148,6 +175,33 @@ Job.s: Job.cpp.s
 Job.cpp.s:
 	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/Job.cpp.s
 .PHONY : Job.cpp.s
+
+MinHeap.obj: MinHeap.cpp.obj
+
+.PHONY : MinHeap.obj
+
+# target to build an object file
+MinHeap.cpp.obj:
+	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.obj
+.PHONY : MinHeap.cpp.obj
+
+MinHeap.i: MinHeap.cpp.i
+
+.PHONY : MinHeap.i
+
+# target to preprocess a source file
+MinHeap.cpp.i:
+	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.i
+.PHONY : MinHeap.cpp.i
+
+MinHeap.s: MinHeap.cpp.s
+
+.PHONY : MinHeap.s
+
+# target to generate assembly for a file
+MinHeap.cpp.s:
+	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.s
+.PHONY : MinHeap.cpp.s
 
 Server.obj: Server.cpp.obj
 
@@ -212,9 +266,15 @@ help:
 	@echo ... rebuild_cache
 	@echo ... NetworkSimulator
 	@echo ... edit_cache
+	@echo ... Dispacher.obj
+	@echo ... Dispacher.i
+	@echo ... Dispacher.s
 	@echo ... Job.obj
 	@echo ... Job.i
 	@echo ... Job.s
+	@echo ... MinHeap.obj
+	@echo ... MinHeap.i
+	@echo ... MinHeap.s
 	@echo ... Server.obj
 	@echo ... Server.i
 	@echo ... Server.s

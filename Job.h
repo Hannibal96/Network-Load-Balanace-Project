@@ -1,9 +1,10 @@
 //
 // Created by Neria on 06/08/2019.
 //
-
 #ifndef NETWORKSIMULATOR_JOB_H
 #define NETWORKSIMULATOR_JOB_H
+
+#include "defs.h"
 
 class Job{
 public:
@@ -15,7 +16,6 @@ public:
     int GetCreation();
     int GetExiting();
     int GetWaiting();
-
 
 private:
     int creation_time;

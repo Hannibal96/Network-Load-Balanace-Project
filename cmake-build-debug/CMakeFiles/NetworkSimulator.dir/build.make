@@ -95,11 +95,39 @@ CMakeFiles/NetworkSimulator.dir/Server.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/NetworkSimulator.dir/Server.cpp.s"
 	C:\PROGRA~2\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\Server.cpp -o CMakeFiles\NetworkSimulator.dir\Server.cpp.s
 
+CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: CMakeFiles/NetworkSimulator.dir/flags.make
+CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../Dispacher.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj"
+	C:\PROGRA~2\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++.exe  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\NetworkSimulator.dir\Dispacher.cpp.obj -c C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\Dispacher.cpp
+
+CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.i"
+	C:\PROGRA~2\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\Dispacher.cpp > CMakeFiles\NetworkSimulator.dir\Dispacher.cpp.i
+
+CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.s"
+	C:\PROGRA~2\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\Dispacher.cpp -o CMakeFiles\NetworkSimulator.dir\Dispacher.cpp.s
+
+CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.obj: CMakeFiles/NetworkSimulator.dir/flags.make
+CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.obj: ../MinHeap.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.obj"
+	C:\PROGRA~2\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++.exe  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\NetworkSimulator.dir\MinHeap.cpp.obj -c C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\MinHeap.cpp
+
+CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.i"
+	C:\PROGRA~2\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\MinHeap.cpp > CMakeFiles\NetworkSimulator.dir\MinHeap.cpp.i
+
+CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.s"
+	C:\PROGRA~2\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\MinHeap.cpp -o CMakeFiles\NetworkSimulator.dir\MinHeap.cpp.s
+
 # Object files for target NetworkSimulator
 NetworkSimulator_OBJECTS = \
 "CMakeFiles/NetworkSimulator.dir/Job.cpp.obj" \
 "CMakeFiles/NetworkSimulator.dir/main.cpp.obj" \
-"CMakeFiles/NetworkSimulator.dir/Server.cpp.obj"
+"CMakeFiles/NetworkSimulator.dir/Server.cpp.obj" \
+"CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj" \
+"CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.obj"
 
 # External object files for target NetworkSimulator
 NetworkSimulator_EXTERNAL_OBJECTS =
@@ -107,11 +135,13 @@ NetworkSimulator_EXTERNAL_OBJECTS =
 NetworkSimulator.exe: CMakeFiles/NetworkSimulator.dir/Job.cpp.obj
 NetworkSimulator.exe: CMakeFiles/NetworkSimulator.dir/main.cpp.obj
 NetworkSimulator.exe: CMakeFiles/NetworkSimulator.dir/Server.cpp.obj
+NetworkSimulator.exe: CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj
+NetworkSimulator.exe: CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.obj
 NetworkSimulator.exe: CMakeFiles/NetworkSimulator.dir/build.make
 NetworkSimulator.exe: CMakeFiles/NetworkSimulator.dir/linklibs.rsp
 NetworkSimulator.exe: CMakeFiles/NetworkSimulator.dir/objects1.rsp
 NetworkSimulator.exe: CMakeFiles/NetworkSimulator.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable NetworkSimulator.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\Neria\Desktop\Technion\Projects\Jose\network_simulator\NetworkSimulator\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable NetworkSimulator.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\NetworkSimulator.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -2,6 +2,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/NetworkSimulator.dir/Job.cpp.obj"
   "CMakeFiles/NetworkSimulator.dir/main.cpp.obj"
   "CMakeFiles/NetworkSimulator.dir/Server.cpp.obj"
+  "CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj"
+  "CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.obj"
   "NetworkSimulator.pdb"
   "NetworkSimulator.exe"
   "NetworkSimulator.exe.manifest"

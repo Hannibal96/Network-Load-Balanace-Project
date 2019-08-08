@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(NetworkSimulator
         Job.cpp
-        main.cpp defs.h Server.cpp Server.h Job.cpp Job.h)
+        main.cpp defs.h Server.cpp Server.h Job.cpp Job.h Dispacher.cpp Dispacher.h MinHeap.cpp MinHeap.h)
