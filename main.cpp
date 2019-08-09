@@ -7,7 +7,7 @@
 #include "Job.h"
 
 #define TIME 1000000
-#define SERVERS_NUM 3
+#define SERVERS_NUM 10
 #define GAMMA 5
 #define MU 0.3
 

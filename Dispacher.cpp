@@ -6,7 +6,9 @@
 
 int Dispatcher::get_destination()
 {
-    return rand() % num_servers_;
+    int destination = rand() % num_servers_;
+    routing_map[destination] ++;
+    return destination;
 }
 
 int Dispatcher::get_arrivals()
@@ -17,8 +19,13 @@ int Dispatcher::get_arrivals()
 }
 
 string Dispatcher::toString() const {
-    return "Dispatcher Number: "+::to_string(id_)+
-        "\n  -dispached jobs: "+::to_string(dispatched_jobs);
+
+    string dispatcher_print = "Dispatcher Number: "+::to_string(id_)+
+                              "\n  -dispached jobs: "+::to_string(dispatched_jobs)+"\n";
+    for (auto const& x : routing_map)
+        dispatcher_print += "   "+::to_string(x.first) +": "+::std::to_string(x.second)+"\n";
+
+    return dispatcher_print;
 }
 
 std::ostream& operator<<(std::ostream& os, const Dispatcher& dsp)
@@ -27,6 +34,10 @@ std::ostream& operator<<(std::ostream& os, const Dispatcher& dsp)
     return os;
 }
 
+int PocDispatcher::get_destination(){
 
+    return 0;
+
+}
 
 

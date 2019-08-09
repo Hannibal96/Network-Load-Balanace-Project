@@ -16,10 +16,12 @@
 #include <string>
 #include <unordered_map>
 #include <limits>
+#include <map>
 
 using std::cout;
 using std::cin;
 using std::endl;
+using std::map;
 
 using std::find;
 using std::abs;
