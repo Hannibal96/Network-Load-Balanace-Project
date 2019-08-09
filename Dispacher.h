@@ -18,16 +18,21 @@ public:
         id_ = id;
         num_servers_ = num_servers;
         main_generator_.seed(id);
+        dispatched_jobs = 0;
     }
-    ~Dispatcher() {    }
+    ~Dispatcher() = default;
     // arrivals at the dispatcher
     int get_arrivals();
     // random by default. Overridden by derived classes.
     virtual int get_destination();
 
+    string toString() const ;
+    friend std::ostream& operator<<(std::ostream& os, const Dispatcher& s);
+
 protected:
     int id_;
     int num_servers_;
+    int dispatched_jobs;
     // Random numbers engine
     default_random_engine main_generator_;
     // Poisson arrivals

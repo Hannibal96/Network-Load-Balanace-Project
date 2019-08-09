@@ -11,10 +11,8 @@ Server::Server(int id, double mu, int queue_max) : completed_jobs_(mu){
     jobs_in_queue=0;
     served_jobs=0;
     jobs_queue = queue<Job>();
-    generator_.seed(id);
+    generator_.seed((unsigned)id);
 }
-
-Server::~Server(){}
 
 void Server::AddJob(Job job) {
     jobs_queue.push(job);               // TODO: add condition for maxed queue
@@ -29,19 +27,20 @@ void Server::FinishJob(int time) {
         jobs_queue.front().FinishJob(time);
         jobs_queue.pop();
         jobs_in_queue --;
+        served_jobs ++;
         assert( jobs_in_queue >= 0 && "-W- Assert, Server::FinishJob queue size smaller than zero" );
     }
-
 }
 
 string Server::toString() const {
-    return "Id: "+::to_string(id)+"\n -jobs_in_queue: "+::to_string(jobs_in_queue)+"\n -served_jobs: "+::to_string(served_jobs);
+    return "Server Id: "+::to_string(id)+
+        "\n  -mu: "+::to_string(mu)+
+        "\n  -jobs_in_queue: "+::to_string(jobs_in_queue)+
+        "\n  -served_jobs: "+::to_string(served_jobs);
 }
 
-/*
-ofstream& operator<<(ofstream& os, const Server& srvr)
+std::ostream& operator<<(std::ostream& os, const Server& srvr)
 {
-    os << "Hello Server";
+    os <<  srvr.toString();
     return os;
 }
- */

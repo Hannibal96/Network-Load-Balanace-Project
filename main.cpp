@@ -6,38 +6,59 @@
 #include "Dispacher.h"
 #include "Job.h"
 
-#define TIME 100000
+#define TIME 1000000
 #define SERVERS_NUM 3
-#define GAMMA 10
+#define GAMMA 5
 #define MU 0.3
+
+void PrintServerStatus(Server** servers, int t);
+void PrintEndSimulation(Server** servers, Dispatcher &dispatcher);
 
 int main(int argc, char *argv[]) {
 
-    Dispatcher disp = Dispatcher(0, SERVERS_NUM, GAMMA);
+    Dispatcher dispatcher = Dispatcher(0, SERVERS_NUM, GAMMA);
 
     Server** servers = new Server*[SERVERS_NUM];
     for(int n=0; n<SERVERS_NUM; n++){
-        servers[n] = new Server(n, MU);
+        servers[n] = new Server(n, (double)(n+1)/(SERVERS_NUM+1) );
     }
 
     for (int t = 0; t < TIME; t++) {
-        int arrivals = disp.get_arrivals();
+        int arrivals = dispatcher.get_arrivals();
         for(int a=0; a<arrivals ; a++){
-            int dest = disp.get_destination();
+            int destination = dispatcher.get_destination();
             Job job = Job(t);
-            servers[dest]->AddJob(job);
+            servers[destination]->AddJob(job);
         }
 
         for(int n=0;n<SERVERS_NUM;n++){
             servers[n]->FinishJob(t);
         }
 
-        //cout << "====================" << endl;
-        //cout << "Time: " << t << endl;
-        for(int n=0; n<SERVERS_NUM; n++){
-            //cout << servers[n]->toString() << endl;
+        if(t%100000 == 0) {
+            PrintServerStatus( servers, t);
         }
     }
-    for(int n=0; n<SERVERS_NUM; n++)
-        cout << servers[n]->toString() << endl;
+    PrintEndSimulation(servers, dispatcher );
+
+}
+
+
+
+
+void PrintServerStatus(Server** servers, int t){
+    cout << "====================" << endl;
+    cout << "Time: " << t << endl;
+    for (int n = 0; n < SERVERS_NUM; n++) {
+        cout << *servers[n] << endl;
+    }
+}
+void PrintEndSimulation(Server** servers, Dispatcher &dispatcher){
+    cout << "====================" << endl;
+    cout << "=== Simulation End ===" << endl;
+    cout << "====================" << endl;
+    for (int n = 0; n < SERVERS_NUM; n++) {
+        cout << *servers[n] << endl;
+    }
+    cout << dispatcher << endl;
 }

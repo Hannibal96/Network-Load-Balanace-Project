@@ -11,12 +11,12 @@ class Server{
 
 public:
 Server(int id, double mu, int queue = 100 );   //std::numeric_limits<int>::max()
-~Server();
+~Server() = default;
 void AddJob(Job job);
 void FinishJob(int time);
 string toString() const ;
 
-friend ofstream& operator<<(ofstream& os, const Server& s);
+friend std::ostream& operator<<(std::ostream& os, const Server& s);
 
 protected:
     int id, jobs_in_queue, served_jobs, queue_max;
@@ -28,10 +28,6 @@ protected:
     geometric_distribution<int> completed_jobs_;
 
 };
-
-
-
-
 
 
 #endif //NETWORKSIMULATOR_SERVER_H
