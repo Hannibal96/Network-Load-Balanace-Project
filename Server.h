@@ -10,16 +10,22 @@
 class Server{
 
 public:
-Server(int id, double mu, int queue = 100 );   //std::numeric_limits<int>::max()
-~Server() = default;
-void AddJob(Job job);
-void FinishJob(int time);
-string toString() const ;
+    Server(int id, double mu, int queue_max = std::numeric_limits<int>::max() );   //std::numeric_limits<int>::max()
+    ~Server() = default;
+    void AddJob(Job job);
+    void FinishJob(int time);
 
-friend std::ostream& operator<<(std::ostream& os, const Server& s);
+    int GetQueuedJobs();
+
+    string toString() const ;
+
+    friend std::ostream& operator<<(std::ostream& os, const Server& s);
+    static int total_serving_time;
+    static int total_served_jobs;
+
 
 protected:
-    int id, jobs_in_queue, served_jobs, queue_max;
+    int id, jobs_in_queue, served_jobs, queue_max, dismissed_jobs, serving_time;
     double mu;
     queue<Job> jobs_queue;
     // random numbers engine

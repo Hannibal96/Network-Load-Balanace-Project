@@ -34,10 +34,22 @@ std::ostream& operator<<(std::ostream& os, const Dispatcher& dsp)
     return os;
 }
 
-int PocDispatcher::get_destination(){
+int PocDispatcher::get_destination(Server** servers, int poc )
+{
+    int min_queue = std::numeric_limits<int>::max();
+    int min_index = -1;
+    set<int> random_idx;
 
-    return 0;
+    while ( random_idx.size() < poc)
+        random_idx.insert(rand() % num_servers_);
 
+    for (auto elem : random_idx) {
+        if( servers[elem]->GetQueuedJobs() < min_queue ){
+            min_queue = servers[elem]->GetQueuedJobs();
+            min_index = elem;
+        }
+    }
+    routing_map[min_index] ++;
+    return min_index;
 }
-
 

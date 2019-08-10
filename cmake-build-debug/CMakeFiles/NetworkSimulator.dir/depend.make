@@ -3,7 +3,9 @@
 
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../Dispacher.cpp
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../Dispacher.h
+CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../Job.h
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../MinHeap.h
+CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../Server.h
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../defs.h
 
 CMakeFiles/NetworkSimulator.dir/Job.cpp.obj: ../Job.cpp

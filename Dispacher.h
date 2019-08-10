@@ -7,13 +7,14 @@
 
 #include "defs.h"
 #include "MinHeap.h"
+#include "Server.h"
 
 class Dispatcher
 {
 
 public:
 
-    Dispatcher(int id, int num_servers, double load) : poisson_distribution_(load)
+    explicit Dispatcher(int id, int num_servers, double load) : poisson_distribution_(load)
     {
         id_ = id;
         num_servers_ = num_servers;
@@ -26,7 +27,7 @@ public:
     }
     ~Dispatcher() = default;
     // arrivals at the dispatcher
-    int get_arrivals();
+    virtual int get_arrivals();
     // random by default. Overridden by derived classes.
     virtual int get_destination();
 
@@ -46,8 +47,12 @@ protected:
     poisson_distribution<int> poisson_distribution_;
 };
 
-class PocDispatcher{
-    virtual int get_destination();
+
+
+class PocDispatcher: public Dispatcher{
+public:
+    explicit PocDispatcher(int id, int num_servers, double load) : Dispatcher(id, num_servers, load) { }
+    virtual int get_destination(Server** servers, int poc);
 };
 
 

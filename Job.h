@@ -9,9 +9,9 @@
 class Job{
 public:
     Job(int time);
-    ~Job();
+    ~Job() = default;
 
-    void FinishJob(int time);
+    int FinishJob(int time);
 
     int GetCreation();
     int GetExiting();
