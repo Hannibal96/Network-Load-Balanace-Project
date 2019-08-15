@@ -86,6 +86,12 @@
 		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h">
 			<Option target="NetworkSimulator"/>
 		</Unit>
+		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/JBuffer.cpp">
+			<Option target="NetworkSimulator"/>
+		</Unit>
+		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/JBuffer.h">
+			<Option target="NetworkSimulator"/>
+		</Unit>
 		<Unit filename="C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.cpp">
 			<Option target="NetworkSimulator"/>
 		</Unit>

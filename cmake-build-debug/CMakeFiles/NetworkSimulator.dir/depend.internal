@@ -4,8 +4,15 @@
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.cpp
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/JBuffer.h
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/MinHeap.h
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
+CMakeFiles/NetworkSimulator.dir/JBuffer.cpp.obj
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/JBuffer.cpp
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/JBuffer.h
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
 CMakeFiles/NetworkSimulator.dir/Job.cpp.obj
@@ -23,6 +30,7 @@ CMakeFiles/NetworkSimulator.dir/Server.cpp.obj
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
 CMakeFiles/NetworkSimulator.dir/main.cpp.obj
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h
+ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/JBuffer.h
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/MinHeap.h
  C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h

@@ -149,6 +149,33 @@ Dispacher.cpp.s:
 	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.s
 .PHONY : Dispacher.cpp.s
 
+JBuffer.obj: JBuffer.cpp.obj
+
+.PHONY : JBuffer.obj
+
+# target to build an object file
+JBuffer.cpp.obj:
+	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/JBuffer.cpp.obj
+.PHONY : JBuffer.cpp.obj
+
+JBuffer.i: JBuffer.cpp.i
+
+.PHONY : JBuffer.i
+
+# target to preprocess a source file
+JBuffer.cpp.i:
+	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/JBuffer.cpp.i
+.PHONY : JBuffer.cpp.i
+
+JBuffer.s: JBuffer.cpp.s
+
+.PHONY : JBuffer.s
+
+# target to generate assembly for a file
+JBuffer.cpp.s:
+	$(MAKE) -f CMakeFiles\NetworkSimulator.dir\build.make CMakeFiles/NetworkSimulator.dir/JBuffer.cpp.s
+.PHONY : JBuffer.cpp.s
+
 Job.obj: Job.cpp.obj
 
 .PHONY : Job.obj
@@ -269,6 +296,9 @@ help:
 	@echo ... Dispacher.obj
 	@echo ... Dispacher.i
 	@echo ... Dispacher.s
+	@echo ... JBuffer.obj
+	@echo ... JBuffer.i
+	@echo ... JBuffer.s
 	@echo ... Job.obj
 	@echo ... Job.i
 	@echo ... Job.s

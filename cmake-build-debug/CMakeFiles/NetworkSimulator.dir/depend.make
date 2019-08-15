@@ -3,10 +3,17 @@
 
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../Dispacher.cpp
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../Dispacher.h
+CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../JBuffer.h
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../Job.h
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../MinHeap.h
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../Server.h
 CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj: ../defs.h
+
+CMakeFiles/NetworkSimulator.dir/JBuffer.cpp.obj: ../JBuffer.cpp
+CMakeFiles/NetworkSimulator.dir/JBuffer.cpp.obj: ../JBuffer.h
+CMakeFiles/NetworkSimulator.dir/JBuffer.cpp.obj: ../Job.h
+CMakeFiles/NetworkSimulator.dir/JBuffer.cpp.obj: ../Server.h
+CMakeFiles/NetworkSimulator.dir/JBuffer.cpp.obj: ../defs.h
 
 CMakeFiles/NetworkSimulator.dir/Job.cpp.obj: ../Job.cpp
 CMakeFiles/NetworkSimulator.dir/Job.cpp.obj: ../Job.h
@@ -22,6 +29,7 @@ CMakeFiles/NetworkSimulator.dir/Server.cpp.obj: ../Server.h
 CMakeFiles/NetworkSimulator.dir/Server.cpp.obj: ../defs.h
 
 CMakeFiles/NetworkSimulator.dir/main.cpp.obj: ../Dispacher.h
+CMakeFiles/NetworkSimulator.dir/main.cpp.obj: ../JBuffer.h
 CMakeFiles/NetworkSimulator.dir/main.cpp.obj: ../Job.h
 CMakeFiles/NetworkSimulator.dir/main.cpp.obj: ../MinHeap.h
 CMakeFiles/NetworkSimulator.dir/main.cpp.obj: ../Server.h

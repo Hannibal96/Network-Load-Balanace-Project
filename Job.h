@@ -17,6 +17,7 @@ public:
     int GetExiting();
     int GetWaiting();
     string toString() const ;
+    void SetWaiting(int time);
 
     friend std::ostream& operator<<(std::ostream& os, const Job& s);
 

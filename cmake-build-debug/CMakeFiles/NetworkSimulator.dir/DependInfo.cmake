@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.cpp" "C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/cmake-build-debug/CMakeFiles/NetworkSimulator.dir/Dispacher.cpp.obj"
+  "C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/JBuffer.cpp" "C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/cmake-build-debug/CMakeFiles/NetworkSimulator.dir/JBuffer.cpp.obj"
   "C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.cpp" "C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/cmake-build-debug/CMakeFiles/NetworkSimulator.dir/Job.cpp.obj"
   "C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/MinHeap.cpp" "C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/cmake-build-debug/CMakeFiles/NetworkSimulator.dir/MinHeap.cpp.obj"
   "C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.cpp" "C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/cmake-build-debug/CMakeFiles/NetworkSimulator.dir/Server.cpp.obj"

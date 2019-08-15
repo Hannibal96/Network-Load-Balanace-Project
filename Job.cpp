@@ -18,6 +18,7 @@ Job::Job(int time)
 int Job::GetCreation() {   return creation_time; }
 int Job::GetExiting() {    return exiting_time;  }
 int Job::GetWaiting() {    return waiting_time;  }
+void Job::SetWaiting(int time) { waiting_time = time; };
 
 int Job::FinishJob(int time)
 {

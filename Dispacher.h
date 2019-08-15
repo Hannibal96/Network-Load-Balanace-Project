@@ -8,6 +8,7 @@
 #include "defs.h"
 #include "MinHeap.h"
 #include "Server.h"
+#include "JBuffer.h"
 
 class Dispatcher
 {
@@ -20,10 +21,9 @@ public:
         num_servers_ = num_servers;
         main_generator_.seed(id);
         dispatched_jobs = 0;
-
         for(int i=0;i<num_servers; i++)
             routing_map[i] = 0;
-
+        buffer = JBuffer(1000+id,num_servers);
     }
     ~Dispatcher() = default;
     // arrivals at the dispatcher
@@ -34,17 +34,16 @@ public:
     string toString() const ;
     friend std::ostream& operator<<(std::ostream& os, const Dispatcher& s);
 
+    static int total_dispatched_jobs;
+
 protected:
-    int id_;
-    int num_servers_;
-    int dispatched_jobs;
-
+    int id_, num_servers_, dispatched_jobs;
     map<int,int> routing_map;
-
     // Random numbers engine
     default_random_engine main_generator_;
     // Poisson arrivals
     poisson_distribution<int> poisson_distribution_;
+    JBuffer buffer;
 };
 
 

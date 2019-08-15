@@ -6,22 +6,26 @@
 #include "Dispacher.h"
 #include "Job.h"
 
-#define TIME 1000000
+#define TIME 10000
 #define PRINTTIME 1000000
-#define SERVERS_NUM 100
-#define GAMMA 200
-#define MU 0.3
+#define SERVERS_NUM 10
+#define GAMMA 10
+#define MU 0.5
+
+
+/***************************************************
+ **************** declerations  ********************
+ ***************************************************/
 
 void PrintServerStatus(Server** servers, int t);
 void PrintEndSimulation(Server** servers, Dispatcher &dispatcher);
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
-    //TODO: add reading arguments section
-
-    //TODO: find better way to intiallize the dispatcher
-
-    //TODO: add the function that normallize GAMMA and MU based on load definition
+    /***************************************************
+     ****************** initialize *********************
+     ***************************************************/
 
     PocDispatcher dispatcher = PocDispatcher(0, SERVERS_NUM, GAMMA);
 
@@ -30,10 +34,14 @@ int main(int argc, char *argv[]) {
         servers[n] = new Server(n, MU);//(double)(n+1)/(SERVERS_NUM+1));
     }
 
+    /***************************************************
+     ****************** main loop **********************
+     ***************************************************/
+
     for (int t = 0; t < TIME; t++) {
         int arrivals = dispatcher.get_arrivals();
         for(int a=0; a<arrivals ; a++){
-            int destination = dispatcher.get_destination(servers, 2);
+            int destination = dispatcher.get_destination(servers, 1);
             Job job = Job(t);
             servers[destination]->AddJob(job);
         }
@@ -44,11 +52,19 @@ int main(int argc, char *argv[]) {
         if( t % PRINTTIME == 0 && t > 0 )
             PrintServerStatus( servers, t);
     }
+
+    /***************************************************
+     ***************** conclusions  ********************
+     ***************************************************/
+
     PrintEndSimulation(servers, dispatcher );
 
 }
 
 
+/***************************************************
+ ***************** functions  **********************
+ ***************************************************/
 
 
 void PrintServerStatus(Server** servers, int t){
@@ -62,16 +78,19 @@ void PrintEndSimulation(Server** servers, Dispatcher &dispatcher){
     cout << "======================" << endl;
     cout << "=== Simulation End ===" << endl;
     cout << "======================" << endl;
+    int total_queued_jobs = 0;
     for (int n = 0; n < SERVERS_NUM; n++) {
         cout << *servers[n] << endl;
+        total_queued_jobs += servers[n]->GetQueuedJobs();
     }
+
+    cout << dispatcher << endl;
+
+    assert(total_queued_jobs+Server::total_served_jobs == Dispatcher::total_dispatched_jobs &&
+              "-W- Assert, Served Jobs + Queued Jobs != Total Dispatched Jobs" );
 
     cout << "======================" << endl;
     cout << "Total serving time average: " << (double)Server::total_serving_time/Server::total_served_jobs << endl;
     cout << "======================" << endl;
-    cout << dispatcher << endl;
 }
-
-/*TODO: add assert that make sure that sigma(dispatched) == sigma(served) + sigma(in_queue) + sigma(dismissed)
- *TODO: same for serving time etc */
 
