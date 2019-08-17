@@ -11,6 +11,7 @@ Server::Server(int id, double mu, int queue_max) : completed_jobs_(mu){
     this->id = id;
     this->mu = mu;
     this->queue_max = queue_max;
+    serving_time = 0;
     jobs_in_queue=0;
     served_jobs=0;
     dismissed_jobs = 0;
@@ -30,7 +31,7 @@ void Server::AddJob(Job job) {
 
 int Server::GetQueuedJobs(){ return jobs_in_queue; }
 
-void Server::FinishJob(int time) {
+int Server::FinishJob(int time) {
     int offered_service = completed_jobs_(generator_);
     int serving_jobs = std::min(offered_service, jobs_in_queue);
     assert(jobs_in_queue == jobs_queue.size() && "-W- Assert, Server::FinishJob queue size mismatch" );
@@ -39,13 +40,13 @@ void Server::FinishJob(int time) {
         assert(job_service_time >= 0 && "-W- Assert, Server::FinishJob serving job time is negative" );
         total_serving_time += job_service_time;
         serving_time += job_service_time;
-        //cout << jobs_queue.front() << endl;
         jobs_queue.pop();
         jobs_in_queue --;
         served_jobs ++;
         total_served_jobs++;
         assert( jobs_in_queue >= 0 && "-W- Assert, Server::FinishJob queue size smaller than zero" );
     }
+    return serving_jobs;
 }
 
 string Server::toString() const {

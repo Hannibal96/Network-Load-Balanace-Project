@@ -54,6 +54,17 @@ public:
     virtual int get_destination(Server** servers, int poc);
 };
 
+class JsqDispatcher : public Dispatcher
+{
+public:
+    JsqDispatcher(int id, int num_servers, double load) : Dispatcher(id, num_servers, load)
+    {        servers_heap_ = new MinHeap(num_servers);    }
+    ~JsqDispatcher()  {  delete servers_heap_;    }
+    int get_destination() override;
+    void update_server(int server_num, int finished_jobs);
+private:
+    MinHeap* servers_heap_;
+};
 
 
 #endif //NETWORKSIMULATOR_DISPACHER_H

@@ -58,3 +58,18 @@ int PocDispatcher::get_destination(Server** servers, int poc )
     return min_index;
 }
 
+int JsqDispatcher::get_destination()
+{
+    int min_index = servers_heap_->GetMin();
+    int new_queued_number = servers_heap_->GetVal(min_index) + 1;
+    servers_heap_->UpdateKey(min_index, new_queued_number);
+    routing_map[min_index] ++;
+    return min_index;
+}
+
+void JsqDispatcher::update_server(int server_num, int finished_jobs)
+{
+    int new_queued_number = servers_heap_->GetVal(server_num) - finished_jobs;
+    assert(new_queued_number >= 0 && "-W- Assert, JsqDispatcher::update_server :   new_queued_number < 0" );
+    servers_heap_->UpdateKey(server_num, new_queued_number);
+}

@@ -13,7 +13,7 @@ public:
     Server(int id, double mu, int queue_max = std::numeric_limits<int>::max() );   //std::numeric_limits<int>::max()
     ~Server() = default;
     void AddJob(Job job);
-    void FinishJob(int time);
+    int FinishJob(int time);
 
     int GetQueuedJobs();
 

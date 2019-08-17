@@ -21,7 +21,7 @@ void JBuffer::AddJob(Job job)
 bool JBuffer::CheckReRoute(Server& server)
 {
     //TODO: set condition
-    if(server.GetQueuedJobs() < 100)
+    if(server.GetQueuedJobs() > 100)
         return true;
     return false;
 }
@@ -38,7 +38,7 @@ Job JBuffer::SendJob(int time, int server_num)
 string JBuffer::toString() const
 {
     string buffer_print = "Buffer Id: "+::to_string(id)+
-                          "\n  -jobs_in_buffer: "+::to_string(jobs_in_buffer);
+                          "\n  -jobs_in_buffer: "+::to_string(jobs_in_buffer)+"\n";
     for (auto const& x : routing_map)
         buffer_print += "   "+::to_string(x.first) +": "+::std::to_string(x.second)+"\n";
     return buffer_print;

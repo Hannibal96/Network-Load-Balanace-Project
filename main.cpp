@@ -8,8 +8,8 @@
 
 #define TIME 10000
 #define PRINTTIME 1000000
-#define SERVERS_NUM 10
-#define GAMMA 10
+#define SERVERS_NUM 100
+#define GAMMA 500
 #define MU 0.5
 
 
@@ -27,11 +27,11 @@ int main(int argc, char *argv[])
      ****************** initialize *********************
      ***************************************************/
 
-    PocDispatcher dispatcher = PocDispatcher(0, SERVERS_NUM, GAMMA);
+    JsqDispatcher dispatcher = JsqDispatcher(0, SERVERS_NUM, GAMMA);
 
     Server** servers = new Server*[SERVERS_NUM];
     for(int n=0; n<SERVERS_NUM; n++){
-        servers[n] = new Server(n, MU);//(double)(n+1)/(SERVERS_NUM+1));
+        servers[n] = new Server(n, (double)(1+n)/(1+SERVERS_NUM) );//(double)(n+1)/(SERVERS_NUM+1));
     }
 
     /***************************************************
@@ -41,13 +41,15 @@ int main(int argc, char *argv[])
     for (int t = 0; t < TIME; t++) {
         int arrivals = dispatcher.get_arrivals();
         for(int a=0; a<arrivals ; a++){
-            int destination = dispatcher.get_destination(servers, 1);
+            int destination = dispatcher.get_destination();
             Job job = Job(t);
             servers[destination]->AddJob(job);
         }
 
-        for(int n=0;n<SERVERS_NUM;n++)
-            servers[n]->FinishJob(t);
+        for(int n=0;n<SERVERS_NUM;n++) {
+            int finished_jobs = servers[n]->FinishJob(t);
+            dispatcher.update_server(n,finished_jobs);
+        }
 
         if( t % PRINTTIME == 0 && t > 0 )
             PrintServerStatus( servers, t);
