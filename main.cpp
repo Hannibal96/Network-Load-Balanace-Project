@@ -22,9 +22,6 @@ void PrintEndSimulation(Server** servers, Dispatcher &dispatcher);
 
 int main(int argc, char *argv[])
 {
-
-    cout << "chapash" << endl;
-
     /***************************************************
      ****************** initialize *********************
      ***************************************************/
