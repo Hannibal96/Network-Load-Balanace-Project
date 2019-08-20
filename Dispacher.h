@@ -47,7 +47,6 @@ protected:
 };
 
 
-
 class PocDispatcher: public Dispatcher{
 public:
     explicit PocDispatcher(int id, int num_servers, double load) : Dispatcher(id, num_servers, load) { }
@@ -65,6 +64,28 @@ public:
 private:
     MinHeap* servers_heap_;
 };
+
+class JiqDispatcher: public Dispatcher{
+public:
+    JiqDispatcher(int id, int num_servers, double load) : Dispatcher(id, num_servers, load) {
+        idle_servers = vector<int>();
+        for(int i=0; i<num_servers; i++)
+            idle_servers.push_back(i);
+    };
+    ~JiqDispatcher() = default;
+    int get_destination() override;
+    void update_server(int server_num, bool is_idle);
+
+private:
+    vector<int> idle_servers;
+
+};
+
+
+
+
+
+
 
 
 #endif //NETWORKSIMULATOR_DISPACHER_H

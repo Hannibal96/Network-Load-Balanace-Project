@@ -73,3 +73,22 @@ void JsqDispatcher::update_server(int server_num, int finished_jobs)
     assert(new_queued_number >= 0 && "-W- Assert, JsqDispatcher::update_server :   new_queued_number < 0" );
     servers_heap_->UpdateKey(server_num, new_queued_number);
 }
+
+int JiqDispatcher::get_destination(){
+    int destination = -1;
+    if(idle_servers.size() == 0)
+        destination = rand() % num_servers_;
+    else {
+        int rand_idle = rand() % idle_servers.size();
+        destination = idle_servers[rand_idle];
+        idle_servers.erase(std::remove(idle_servers.begin(), idle_servers.end(), destination), idle_servers.end());
+    }
+    assert(destination != -1 && "-W- Assert, JiqDispatcher::get_destination :   destination == -1" );
+    routing_map[destination] ++;
+    return destination;
+}
+
+void JiqDispatcher::update_server(int server_num, bool is_idle){
+    if(is_idle)
+        idle_servers.push_back(server_num);
+}

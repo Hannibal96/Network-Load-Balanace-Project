@@ -3,6 +3,7 @@
 //
 
 #include "Server.h"
+#include "utility"
 
 int Server::total_serving_time = 0;
 int Server::total_served_jobs = 0;
@@ -31,9 +32,17 @@ void Server::AddJob(Job job) {
 
 int Server::GetQueuedJobs(){ return jobs_in_queue; }
 
-int Server::FinishJob(int time) {
+std::pair<int,bool > Server::FinishJob(int time) {
     int offered_service = completed_jobs_(generator_);
     int serving_jobs = std::min(offered_service, jobs_in_queue);
+
+    std::pair<int,bool> finished_jobs = std::pair<int ,bool>();
+    finished_jobs.first = serving_jobs;
+    if(finished_jobs.first == jobs_in_queue)
+        finished_jobs.second = true;
+    else
+        finished_jobs.second = false;
+
     assert(jobs_in_queue == jobs_queue.size() && "-W- Assert, Server::FinishJob queue size mismatch" );
     for(int i=0 ; i< serving_jobs;i++) {
         int job_service_time = jobs_queue.front().FinishJob(time);
@@ -46,7 +55,7 @@ int Server::FinishJob(int time) {
         total_served_jobs++;
         assert( jobs_in_queue >= 0 && "-W- Assert, Server::FinishJob queue size smaller than zero" );
     }
-    return serving_jobs;
+    return finished_jobs;
 }
 
 string Server::toString() const {
