@@ -45,15 +45,19 @@ int PocDispatcher::get_destination(Server** servers, int poc )
     int min_index = -1;
     set<int> random_idx;
 
-    while ( random_idx.size() < poc)
-        random_idx.insert(rand() % num_servers_);
-
+    while ( random_idx.size() < poc) {
+        int r = rand() % num_servers_;
+        random_idx.insert(r);
+    }
+    assert(random_idx.size() == poc && "-W- Assert, PocDispatcher::get_destination : number of random indices dosen't "
+                                       "match POC value" );
     for (auto elem : random_idx) {
         if( servers[elem]->GetQueuedJobs() < min_queue ){
             min_queue = servers[elem]->GetQueuedJobs();
             min_index = elem;
         }
     }
+    assert(min_index >= 0 && "-W- Assert, PocDispatcher::get_destination : min_index < 0" );
     routing_map[min_index] ++;
     return min_index;
 }
@@ -113,4 +117,10 @@ int PiDispatcher::get_destination(){
 void PiDispatcher::update_server(int server_num, bool is_idle){
     if(is_idle)
         idle_servers.push_back(server_num);
+}
+
+int RrDispatcher::get_destination(){
+    int destination = (current ++) % num_servers_;
+    routing_map[destination] ++ ;
+    return destination;
 }

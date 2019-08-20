@@ -8,10 +8,10 @@
 
 using namespace std;
 
-#define TIME 1000000
-#define PRINTTIME 1000000
-#define SERVERS_NUM 5
-#define GAMMA 5
+#define TIME 100000
+#define PRINTTIME 100000
+#define SERVERS_NUM 6
+#define GAMMA 6
 #define MU 0.5
 
 
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
      ****************** initialize *********************
      ***************************************************/
 
-    PiDispatcher dispatcher = PiDispatcher(0, SERVERS_NUM, GAMMA); // for jsq use: JsqDispatcher dispatcher = JsqDispatcher(0, SERVERS_NUM, GAMMA);
+    RrDispatcher dispatcher = RrDispatcher(0, SERVERS_NUM, GAMMA); // for jsq use: JsqDispatcher dispatcher = JsqDispatcher(0, SERVERS_NUM, GAMMA);
 
     Server** servers = new Server*[SERVERS_NUM];
     for(int n=0; n<SERVERS_NUM; n++){
@@ -42,14 +42,14 @@ int main(int argc, char *argv[])
     for (int t = 0; t < TIME; t++) {
         int arrivals = dispatcher.get_arrivals();
         for(int a=0; a<arrivals ; a++){
-            int destination = dispatcher.get_destination();
+            int destination = dispatcher.get_destination();  // for POC:             int destination = dispatcher.get_destination(servers,3);
             Job job = Job(t);
             servers[destination]->AddJob(job);
         }
 
         for(int n=0;n<SERVERS_NUM;n++) {
             pair<int, bool> finished_jobs = servers[n]->FinishJob(t);
-            dispatcher.update_server(n,finished_jobs.second); // for jsq use: dispatcher.update_server(n,finished_jobs.first);
+            //dispatcher.update_server(n,finished_jobs.second); // for jsq use: dispatcher.update_server(n,finished_jobs.first);
         }
 
         if( t % PRINTTIME == 0 && t > 0 )

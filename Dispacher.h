@@ -97,6 +97,18 @@ protected:
 
 };
 
+class RrDispatcher: public Dispatcher{
+public:
+    RrDispatcher(int id, int num_servers, double load) : Dispatcher(id, num_servers, load) {
+        this->current = rand() % num_servers;
+    };
+    ~RrDispatcher() = default;
+    int get_destination() override;
+
+protected:
+    int current;
+
+};
 
 
 
