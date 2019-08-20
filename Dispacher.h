@@ -61,7 +61,8 @@ public:
     ~JsqDispatcher()  {  delete servers_heap_;    }
     int get_destination() override;
     void update_server(int server_num, int finished_jobs);
-private:
+
+protected:
     MinHeap* servers_heap_;
 };
 
@@ -76,13 +77,25 @@ public:
     int get_destination() override;
     void update_server(int server_num, bool is_idle);
 
-private:
+protected:
     vector<int> idle_servers;
 
 };
 
 
+class PiDispatcher: public JiqDispatcher{
+public:
+    PiDispatcher(int id, int num_servers, double load) : JiqDispatcher(id, num_servers, load) {
+        this->last_idle_server = -1;
+    };
+    ~PiDispatcher() = default;
+    int get_destination() override;
+    void update_server(int server_num, bool is_idle);
 
+protected:
+    int last_idle_server;
+
+};
 
 
 

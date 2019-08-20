@@ -92,3 +92,25 @@ void JiqDispatcher::update_server(int server_num, bool is_idle){
     if(is_idle)
         idle_servers.push_back(server_num);
 }
+
+
+int PiDispatcher::get_destination(){
+    int destination = -1;
+    if(idle_servers.size() == 0)
+        destination = last_idle_server ;
+    else {
+        int rand_idle = rand() % idle_servers.size();
+        destination = idle_servers[rand_idle];
+        idle_servers.erase(std::remove(idle_servers.begin(), idle_servers.end(), destination), idle_servers.end());
+        if(idle_servers.size() == 0)
+            last_idle_server = destination;
+    }
+    assert(destination != -1 && "-W- Assert, PiDispatcher::get_destination :   destination == -1" );
+    routing_map[destination] ++;
+    return destination;
+}
+
+void PiDispatcher::update_server(int server_num, bool is_idle){
+    if(is_idle)
+        idle_servers.push_back(server_num);
+}

@@ -10,7 +10,7 @@ using namespace std;
 
 #define TIME 1000000
 #define PRINTTIME 1000000
-#define SERVERS_NUM 10
+#define SERVERS_NUM 5
 #define GAMMA 5
 #define MU 0.5
 
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
      ****************** initialize *********************
      ***************************************************/
 
-    JiqDispatcher dispatcher = JiqDispatcher(0, SERVERS_NUM, GAMMA); // for jsq use: JsqDispatcher dispatcher = JsqDispatcher(0, SERVERS_NUM, GAMMA);
+    PiDispatcher dispatcher = PiDispatcher(0, SERVERS_NUM, GAMMA); // for jsq use: JsqDispatcher dispatcher = JsqDispatcher(0, SERVERS_NUM, GAMMA);
 
     Server** servers = new Server*[SERVERS_NUM];
     for(int n=0; n<SERVERS_NUM; n++){
