@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define TIME 1000000
+#define TIME 100000
 #define PRINTTIME 100000
 #define SERVERS_NUM 10
 #define GAMMA 10
@@ -29,48 +29,31 @@ int main(int argc, char *argv[])
      ***************************************************/
 
     int server_num = SERVERS_NUM;
-    int POC = 2;
+    int POC = 3;
     string algo = argv[1];
     double server_rate[server_num];
     for (int n =0; n < server_num; n++){
         server_rate[n] = (double)(1+n)/(1+server_num);
     }
+    double gamma = GAMMA;
 
     /***************************************************
      ****************** initialize *********************
      ***************************************************/
     Dispatcher *dispatcher;
-    if(algo == "Random") {
-        Dispatcher* dispatcher1 = new Dispatcher(0, SERVERS_NUM, GAMMA);
-        dispatcher = dispatcher1;
-    }
-    else if(algo == "RoundRobin") {
-        RrDispatcher* dispatcher1 = new RrDispatcher(0, SERVERS_NUM, GAMMA);
-        dispatcher = dispatcher1;
-    }
-    else if(algo=="POC"){
-        PocDispatcher* dispatcher1 = new PocDispatcher(0,SERVERS_NUM,GAMMA);
-        dispatcher = dispatcher1;
-    }
-    else if(algo == "JSQ") {
-        JsqDispatcher* dispatcher1 = new JsqDispatcher(0, SERVERS_NUM, GAMMA);
-        dispatcher = dispatcher1;
-    }
-    else if(algo == "JIQ") {
-        JiqDispatcher* dispatcher1 = new JiqDispatcher(0, SERVERS_NUM, GAMMA);
-        dispatcher = dispatcher1;
-    }
-    else if (algo == "PI") {
-        PiDispatcher* dispatcher1 = new PiDispatcher(0, SERVERS_NUM, GAMMA);
-        dispatcher = dispatcher1;
-    }
+    if(algo == "Random")          dispatcher = new Dispatcher(0, server_num, gamma);
+    else if(algo == "RoundRobin") dispatcher = new RrDispatcher(0, server_num, gamma);
+    else if(algo=="POC")          dispatcher = new PocDispatcher(0,server_num,gamma);
+    else if(algo == "JSQ")        dispatcher = new JsqDispatcher(0, server_num, gamma);
+    else if(algo == "JIQ")        dispatcher = new JiqDispatcher(0, server_num, gamma);
+    else if (algo == "PI")        dispatcher = new PiDispatcher(0, server_num, gamma);
     else{
         cout << "-E- Worng algorithm " << endl;
         exit(1);
     }
 
-    Server** servers = new Server*[SERVERS_NUM];
-    for(int n=0; n<SERVERS_NUM; n++){
+    Server** servers = new Server*[server_num];
+    for(int n=0; n<server_num; n++){
         servers[n] = new Server(n, server_rate[n]);
     }
 
@@ -94,15 +77,9 @@ int main(int argc, char *argv[])
 
         for(int n=0;n<SERVERS_NUM;n++) {
             pair<int, bool> finished_jobs = servers[n]->FinishJob(t);
-            if(algo == "JSQ"){
-                dynamic_cast<JsqDispatcher*>(dispatcher)->update_server(n,finished_jobs.first);
-            }
-            else if(algo == "JIQ") {
-                dynamic_cast<JiqDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
-            }
-            else if (algo == "PI") {
-                dynamic_cast<PiDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
-            }
+            if(algo == "JSQ")          dynamic_cast<JsqDispatcher*>(dispatcher)->update_server(n,finished_jobs.first);
+            else if(algo == "JIQ")     dynamic_cast<JiqDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
+            else if (algo == "PI")     dynamic_cast<PiDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
         }
 
         if( t % PRINTTIME == 0 && t > 0 ) {
