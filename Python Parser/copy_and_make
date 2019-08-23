@@ -1,0 +1,4 @@
+#!/bin/bash
+cp ~/PycharmProjects/LoadBalanceParser/main.py ~/Desktop/'Python Parser'/
+cp ~/CLionProjects/LB_Parser/main.cpp ~/Desktop/'Python Parser'/c_program/
+echo "Copied"
