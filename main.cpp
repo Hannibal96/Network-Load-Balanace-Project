@@ -8,10 +8,10 @@
 
 using namespace std;
 
-#define TIME 100000
+#define TIME 1000000
 #define PRINTTIME 100000
-#define SERVERS_NUM 6
-#define GAMMA 6
+#define SERVERS_NUM 10
+#define GAMMA 10
 #define MU 0.5
 
 
@@ -25,14 +25,53 @@ void PrintEndSimulation(Server** servers, Dispatcher &dispatcher);
 int main(int argc, char *argv[])
 {
     /***************************************************
-     ****************** initialize *********************
+     ******************* parsing ***********************
      ***************************************************/
 
-    RrDispatcher dispatcher = RrDispatcher(0, SERVERS_NUM, GAMMA); // for jsq use: JsqDispatcher dispatcher = JsqDispatcher(0, SERVERS_NUM, GAMMA);
+    int server_num = SERVERS_NUM;
+    int POC = 2;
+    string algo = argv[1];
+    double server_rate[server_num];
+    for (int n =0; n < server_num; n++){
+        server_rate[n] = (double)(1+n)/(1+server_num);
+    }
+
+    /***************************************************
+     ****************** initialize *********************
+     ***************************************************/
+    Dispatcher *dispatcher;
+    if(algo == "Random") {
+        Dispatcher* dispatcher1 = new Dispatcher(0, SERVERS_NUM, GAMMA);
+        dispatcher = dispatcher1;
+    }
+    else if(algo == "RoundRobin") {
+        RrDispatcher* dispatcher1 = new RrDispatcher(0, SERVERS_NUM, GAMMA);
+        dispatcher = dispatcher1;
+    }
+    else if(algo=="POC"){
+        PocDispatcher* dispatcher1 = new PocDispatcher(0,SERVERS_NUM,GAMMA);
+        dispatcher = dispatcher1;
+    }
+    else if(algo == "JSQ") {
+        JsqDispatcher* dispatcher1 = new JsqDispatcher(0, SERVERS_NUM, GAMMA);
+        dispatcher = dispatcher1;
+    }
+    else if(algo == "JIQ") {
+        JiqDispatcher* dispatcher1 = new JiqDispatcher(0, SERVERS_NUM, GAMMA);
+        dispatcher = dispatcher1;
+    }
+    else if (algo == "PI") {
+        PiDispatcher* dispatcher1 = new PiDispatcher(0, SERVERS_NUM, GAMMA);
+        dispatcher = dispatcher1;
+    }
+    else{
+        cout << "-E- Worng algorithm " << endl;
+        exit(1);
+    }
 
     Server** servers = new Server*[SERVERS_NUM];
     for(int n=0; n<SERVERS_NUM; n++){
-        servers[n] = new Server(n, (double)(1+n)/(1+SERVERS_NUM) );//(double)(n+1)/(SERVERS_NUM+1));
+        servers[n] = new Server(n, server_rate[n]);
     }
 
     /***************************************************
@@ -40,28 +79,51 @@ int main(int argc, char *argv[])
      ***************************************************/
 
     for (int t = 0; t < TIME; t++) {
-        int arrivals = dispatcher.get_arrivals();
+        int arrivals = dispatcher->get_arrivals();
         for(int a=0; a<arrivals ; a++){
-            int destination = dispatcher.get_destination();  // for POC:             int destination = dispatcher.get_destination(servers,3);
+            int destination = -1;
+            if(algo == "POC"){
+                destination = dynamic_cast<PocDispatcher *>(dispatcher)->get_destination(servers, POC);
+            } else{
+                destination = dispatcher->get_destination();
+            }
+            assert(destination != -1 && "-W- Assert, main loop : destination was not initialized" );
             Job job = Job(t);
             servers[destination]->AddJob(job);
         }
 
         for(int n=0;n<SERVERS_NUM;n++) {
             pair<int, bool> finished_jobs = servers[n]->FinishJob(t);
-            //dispatcher.update_server(n,finished_jobs.second); // for jsq use: dispatcher.update_server(n,finished_jobs.first);
+            if(algo == "JSQ"){
+                dynamic_cast<JsqDispatcher*>(dispatcher)->update_server(n,finished_jobs.first);
+            }
+            else if(algo == "JIQ") {
+                dynamic_cast<JiqDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
+            }
+            else if (algo == "PI") {
+                dynamic_cast<PiDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
+            }
         }
 
-        if( t % PRINTTIME == 0 && t > 0 )
-            PrintServerStatus( servers, t);
+        if( t % PRINTTIME == 0 && t > 0 ) {
+            PrintServerStatus(servers, t);
+        }
     }
 
     /***************************************************
      ***************** conclusions  ********************
      ***************************************************/
 
-    PrintEndSimulation(servers, dispatcher );
+    PrintEndSimulation(servers, *dispatcher );
 
+    /***************************************************
+     ******************** Free  ************************
+     ***************************************************/
+
+    for(int n=0; n<SERVERS_NUM; n++){
+        delete servers[n];
+    }
+    delete dispatcher;
 }
 
 
