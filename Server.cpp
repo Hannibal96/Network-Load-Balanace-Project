@@ -5,8 +5,8 @@
 #include "Server.h"
 #include "utility"
 
-int Server::total_serving_time = 0;
-int Server::total_served_jobs = 0;
+unsigned long long Server::total_serving_time = 0;
+unsigned long long Server::total_served_jobs = 0;
 
 Server::Server(int id, double mu, int queue_max) : completed_jobs_(mu){
     this->id = id;
@@ -47,8 +47,13 @@ std::pair<int,bool > Server::FinishJob(int time) {
     for(int i=0 ; i< serving_jobs;i++) {
         int job_service_time = jobs_queue.front().FinishJob(time);
         assert(job_service_time >= 0 && "-W- Assert, Server::FinishJob serving job time is negative" );
+
         total_serving_time += job_service_time;
+        assert(total_serving_time >= 0 && "-W- Assert, Server::FinishJob -  total_serving_time OERFLOW" );
+
         serving_time += job_service_time;
+        assert(job_service_time >= 0 && "-W- Assert, Server::FinishJob - serving_time OERFLOW" );
+
         jobs_queue.pop();
         jobs_in_queue --;
         served_jobs ++;

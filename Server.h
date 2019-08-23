@@ -20,12 +20,13 @@ public:
     string toString() const ;
 
     friend std::ostream& operator<<(std::ostream& os, const Server& s);
-    static int total_serving_time;
-    static int total_served_jobs;
+    static unsigned long long total_serving_time;
+    static unsigned long long total_served_jobs;
 
 
 protected:
-    int id, jobs_in_queue, served_jobs, queue_max, dismissed_jobs, serving_time;
+    int id, jobs_in_queue, served_jobs, queue_max, dismissed_jobs;
+    unsigned long long serving_time;
     double mu;
     queue<Job> jobs_queue;
     // random numbers engine
