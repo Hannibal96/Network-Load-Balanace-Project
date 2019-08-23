@@ -8,10 +8,10 @@
 
 using namespace std;
 
-#define TIME 100000
+#define TIME 1000000
 #define PRINTTIME 100000
 #define SERVERS_NUM 10
-#define GAMMA 10
+#define GAMMA 9
 #define MU 0.5
 
 
@@ -37,16 +37,18 @@ int main(int argc, char *argv[])
     }
     double gamma = GAMMA;
 
+    int threshold = 100;
+
     /***************************************************
      ****************** initialize *********************
      ***************************************************/
     Dispatcher *dispatcher;
-    if(algo == "Random")          dispatcher = new Dispatcher(0, server_num, gamma);
-    else if(algo == "RoundRobin") dispatcher = new RrDispatcher(0, server_num, gamma);
-    else if(algo=="POC")          dispatcher = new PocDispatcher(0,server_num,gamma);
-    else if(algo == "JSQ")        dispatcher = new JsqDispatcher(0, server_num, gamma);
-    else if(algo == "JIQ")        dispatcher = new JiqDispatcher(0, server_num, gamma);
-    else if (algo == "PI")        dispatcher = new PiDispatcher(0, server_num, gamma);
+    if(algo == "Random")          dispatcher = new Dispatcher(0, server_num, gamma, threshold);
+    else if(algo == "RoundRobin") dispatcher = new RrDispatcher(0, server_num, gamma, threshold);
+    else if(algo=="POC")          dispatcher = new PocDispatcher(0,server_num,gamma, threshold);
+    else if(algo == "JSQ")        dispatcher = new JsqDispatcher(0, server_num, gamma, threshold);
+    else if(algo == "JIQ")        dispatcher = new JiqDispatcher(0, server_num, gamma, threshold);
+    else if (algo == "PI")        dispatcher = new PiDispatcher(0, server_num, gamma, threshold);
     else{
         cout << "-E- Worng algorithm " << endl;
         exit(1);
@@ -54,7 +56,10 @@ int main(int argc, char *argv[])
 
     Server** servers = new Server*[server_num];
     for(int n=0; n<server_num; n++){
-        servers[n] = new Server(n, server_rate[n]);
+        if(n < server_num/2)
+            servers[n] = new Server(n, (double)1/3);
+        else
+            servers[n] = new Server(n, (double)2/3);
     }
 
     /***************************************************
@@ -68,7 +73,7 @@ int main(int argc, char *argv[])
             if(algo == "POC"){
                 destination = dynamic_cast<PocDispatcher *>(dispatcher)->get_destination(servers, POC);
             } else{
-                destination = dispatcher->get_destination();
+                destination = dispatcher->get_destination(servers);
             }
             assert(destination != -1 && "-W- Assert, main loop : destination was not initialized" );
             Job job = Job(t);

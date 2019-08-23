@@ -6,9 +6,15 @@
 
 int Dispatcher::total_dispatched_jobs = 0;
 
-int Dispatcher::get_destination()
+int Dispatcher::get_destination(Server** servers)
 {
     int destination = rand() % num_servers_;
+
+    if(buffer.CheckReRoute( *servers[destination] )) {
+        cout << "ReRouting" << endl;
+        exit(1);
+    }
+
     routing_map[destination] ++;
     return destination;
 }
@@ -49,8 +55,8 @@ int PocDispatcher::get_destination(Server** servers, int poc )
         int r = rand() % num_servers_;
         random_idx.insert(r);
     }
-    assert(random_idx.size() == poc && "-W- Assert, PocDispatcher::get_destination : number of random indices dosen't "
-                                       "match POC value" );
+    assert(random_idx.size() == poc &&
+         "-W- Assert, PocDispatcher::get_destination : number of random indices dosen't match POC value" );
     for (auto elem : random_idx) {
         if( servers[elem]->GetQueuedJobs() < min_queue ){
             min_queue = servers[elem]->GetQueuedJobs();
@@ -62,7 +68,7 @@ int PocDispatcher::get_destination(Server** servers, int poc )
     return min_index;
 }
 
-int JsqDispatcher::get_destination()
+int JsqDispatcher::get_destination(Server** servers)
 {
     int min_index = servers_heap_->GetMin();
     int new_queued_number = servers_heap_->GetVal(min_index) + 1;
@@ -78,7 +84,7 @@ void JsqDispatcher::update_server(int server_num, int finished_jobs)
     servers_heap_->UpdateKey(server_num, new_queued_number);
 }
 
-int JiqDispatcher::get_destination(){
+int JiqDispatcher::get_destination(Server** servers){
     int destination = -1;
     if(idle_servers.size() == 0)
         destination = rand() % num_servers_;
@@ -98,7 +104,7 @@ void JiqDispatcher::update_server(int server_num, bool is_idle){
 }
 
 
-int PiDispatcher::get_destination(){
+int PiDispatcher::get_destination(Server** servers){
     int destination = -1;
     if(idle_servers.size() == 0)
         destination = last_idle_server ;
@@ -119,7 +125,7 @@ void PiDispatcher::update_server(int server_num, bool is_idle){
         idle_servers.push_back(server_num);
 }
 
-int RrDispatcher::get_destination(){
+int RrDispatcher::get_destination(Server** servers){
     int destination = (current ++) % num_servers_;
     routing_map[destination] ++ ;
     return destination;

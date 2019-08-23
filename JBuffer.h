@@ -14,7 +14,7 @@ class JBuffer {
 public:
 
     JBuffer() = default;
-    JBuffer(int id, int servers_num, int buffer_max = std::numeric_limits<int>::max() )
+    JBuffer(int id, int servers_num, int threshold, int buffer_max = std::numeric_limits<int>::max() )
     {
         this->id = id;
         this->jobs_in_buffer = 0;
@@ -22,6 +22,7 @@ public:
         for(int i = 0; i < servers_num ; i++)
             routing_map[i] = 0;
         this->buffer_max = buffer_max;
+        this->threshold = threshold;
     };
 
     ~JBuffer() = default;
@@ -33,7 +34,7 @@ public:
     static int total_buffered_jobs;
 
 protected:
-    int id, jobs_in_buffer, buffer_max;
+    int id, jobs_in_buffer, buffer_max, threshold;
     queue<Job> jobs_queue;
     map<int,int> routing_map;
 };

@@ -21,7 +21,7 @@ void JBuffer::AddJob(Job job)
 bool JBuffer::CheckReRoute(Server& server)
 {
     //TODO: set condition
-    if(server.GetQueuedJobs() > 100)
+    if(server.GetQueuedJobs() > threshold)
         return true;
     return false;
 }

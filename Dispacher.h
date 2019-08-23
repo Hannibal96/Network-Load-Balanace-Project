@@ -15,7 +15,7 @@ class Dispatcher
 
 public:
 
-    explicit Dispatcher(int id, int num_servers, double load) : poisson_distribution_(load)
+    explicit Dispatcher(int id, int num_servers, double load, int threshold) : poisson_distribution_(load)
     {
         id_ = id;
         num_servers_ = num_servers;
@@ -23,13 +23,13 @@ public:
         dispatched_jobs = 0;
         for(int i=0;i<num_servers; i++)
             routing_map[i] = 0;
-        buffer = JBuffer(1000+id,num_servers);
+        buffer = JBuffer(1000+id,num_servers,threshold);
     }
     ~Dispatcher() = default;
     // arrivals at the dispatcher
     virtual int get_arrivals();
     // random by default. Overridden by derived classes.
-    virtual int get_destination();
+    virtual int get_destination(Server** servers);
 
     string toString() const ;
     friend std::ostream& operator<<(std::ostream& os, const Dispatcher& s);
@@ -49,17 +49,19 @@ protected:
 
 class PocDispatcher: public Dispatcher{
 public:
-    explicit PocDispatcher(int id, int num_servers, double load) : Dispatcher(id, num_servers, load) { }
+    explicit PocDispatcher(int id, int num_servers, double load, int threshold)
+            : Dispatcher(id, num_servers, load, threshold) { }
     virtual int get_destination(Server** servers, int poc);
 };
 
 class JsqDispatcher : public Dispatcher
 {
 public:
-    JsqDispatcher(int id, int num_servers, double load) : Dispatcher(id, num_servers, load)
+    JsqDispatcher(int id, int num_servers, double load, int threshold)
+            : Dispatcher(id, num_servers, load,threshold)
     {        servers_heap_ = new MinHeap(num_servers);    }
     ~JsqDispatcher()  {  delete servers_heap_;    }
-    int get_destination() override;
+    int get_destination(Server** servers) override;
     void update_server(int server_num, int finished_jobs);
 
 protected:
@@ -68,13 +70,14 @@ protected:
 
 class JiqDispatcher: public Dispatcher{
 public:
-    JiqDispatcher(int id, int num_servers, double load) : Dispatcher(id, num_servers, load) {
+    JiqDispatcher(int id, int num_servers, double load, int threshold)
+            : Dispatcher(id, num_servers, load, threshold) {
         idle_servers = vector<int>();
         for(int i=0; i<num_servers; i++)
             idle_servers.push_back(i);
     };
     ~JiqDispatcher() = default;
-    int get_destination() override;
+    int get_destination(Server** servers) override;
     void update_server(int server_num, bool is_idle);
 
 protected:
@@ -85,11 +88,12 @@ protected:
 
 class PiDispatcher: public JiqDispatcher{
 public:
-    PiDispatcher(int id, int num_servers, double load) : JiqDispatcher(id, num_servers, load) {
+    PiDispatcher(int id, int num_servers, double load, int threshold)
+            : JiqDispatcher(id, num_servers, load,threshold) {
         this->last_idle_server = -1;
     };
     ~PiDispatcher() = default;
-    int get_destination() override;
+    int get_destination(Server** servers) override;
     void update_server(int server_num, bool is_idle);
 
 protected:
@@ -99,11 +103,12 @@ protected:
 
 class RrDispatcher: public Dispatcher{
 public:
-    RrDispatcher(int id, int num_servers, double load) : Dispatcher(id, num_servers, load) {
+    RrDispatcher(int id, int num_servers, double load, int threshold)
+    : Dispatcher(id, num_servers, load, threshold) {
         this->current = rand() % num_servers;
     };
     ~RrDispatcher() = default;
-    int get_destination() override;
+    int get_destination(Server** servers) override;
 
 protected:
     int current;
