@@ -9,12 +9,6 @@ int Dispatcher::total_dispatched_jobs = 0;
 int Dispatcher::get_destination(Server** servers)
 {
     int destination = rand() % num_servers_;
-
-    if(buffer.CheckReRoute( *servers[destination] )) {
-        cout << "ReRouting" << endl;
-        exit(1);
-    }
-
     routing_map[destination] ++;
     return destination;
 }
@@ -34,7 +28,7 @@ string Dispatcher::toString() const {
     for (auto const& x : routing_map)
         dispatcher_print += "   "+::to_string(x.first) +": "+::std::to_string(x.second)+"\n";
 
-    dispatcher_print += buffer.toString();
+    //dispatcher_print += buffer.toString();
 
     return dispatcher_print;
 }

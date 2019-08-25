@@ -20,16 +20,28 @@ void JBuffer::AddJob(Job job)
 
 bool JBuffer::CheckReRoute(Server& server)
 {
-    //TODO: set condition
-    if(server.GetQueuedJobs() > threshold)
+    if(server.GetQueuedJobs() >= threshold)
         return true;
     return false;
 }
 
-Job JBuffer::SendJob(int time, int server_num)
+bool JBuffer::CheckReturnToRoute(Server& server)
 {
-    Job re_routed_job = jobs_queue.front();
-    re_routed_job.SetWaiting(time);
+    if(server.GetQueuedJobs() <= low_threshold)
+        return true;
+    return false;
+}
+
+Job* JBuffer::SendJob(int time, int server_num)
+{
+    if(jobs_queue.empty())
+        return nullptr;
+    Job* re_routed_job = &jobs_queue.front();
+    jobs_queue.pop();
+    re_routed_job->SetWaiting(time);
+    jobs_in_buffer --;
+    assert(jobs_in_buffer >= 0  && "-W- Assert, JBuffer::SendJob jobs_in_buffer < 0" );
+    assert(jobs_in_buffer == jobs_queue.size()  && "-W- Assert, JBuffer::SendJob jobs_in_buffer != jobs_queue.size()" );
     routing_map[server_num] ++ ;
     return re_routed_job;
 }

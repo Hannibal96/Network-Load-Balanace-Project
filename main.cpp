@@ -5,13 +5,14 @@
 #include "Server.h"
 #include "Dispacher.h"
 #include "Job.h"
+#include "JBuffer.h"
 
 using namespace std;
 
 #define TIME 1000000
-#define PRINTTIME 100000
+#define PRINTTIME 1000000
 #define SERVERS_NUM 10
-#define GAMMA 9
+#define GAMMA 10
 #define MU 0.5
 
 
@@ -20,10 +21,11 @@ using namespace std;
  ***************************************************/
 
 void PrintServerStatus(Server** servers, int t);
-void PrintEndSimulation(Server** servers, Dispatcher &dispatcher);
+void PrintEndSimulation(Server** servers, Dispatcher &dispatcher, JBuffer &buffer);
 
 int main(int argc, char *argv[])
 {
+
     /***************************************************
      ******************* parsing ***********************
      ***************************************************/
@@ -38,6 +40,7 @@ int main(int argc, char *argv[])
     double gamma = GAMMA;
 
     int threshold = 100;
+    int low_threshold = 10;
 
     /***************************************************
      ****************** initialize *********************
@@ -56,11 +59,12 @@ int main(int argc, char *argv[])
 
     Server** servers = new Server*[server_num];
     for(int n=0; n<server_num; n++){
-        if(n < server_num/2)
-            servers[n] = new Server(n, (double)1/3);
-        else
-            servers[n] = new Server(n, (double)2/3);
+        servers[n] = new Server(n, server_rate[n]);
     }
+
+
+    JBuffer buffer = JBuffer(1001, server_num, threshold, low_threshold);
+
 
     /***************************************************
      ****************** main loop **********************
@@ -77,14 +81,32 @@ int main(int argc, char *argv[])
             }
             assert(destination != -1 && "-W- Assert, main loop : destination was not initialized" );
             Job job = Job(t);
-            servers[destination]->AddJob(job);
+
+            if(buffer.CheckReRoute(*servers[destination])) {
+                //TODO: uncount routing
+                //cout << "ReRoute" << endl;
+                buffer.AddJob(job);
+            }
+            else {
+                servers[destination]->AddJob(job);
+            }
+            if(buffer.CheckReturnToRoute(*servers[destination])){
+                Job* buffered_job = buffer.SendJob(t,destination);
+                while( buffered_job != nullptr ){
+                    servers[destination]->AddJob(*buffered_job);
+                    buffered_job = buffer.SendJob(t,destination);
+                }
+            }
         }
 
         for(int n=0;n<SERVERS_NUM;n++) {
             pair<int, bool> finished_jobs = servers[n]->FinishJob(t);
-            if(algo == "JSQ")          dynamic_cast<JsqDispatcher*>(dispatcher)->update_server(n,finished_jobs.first);
-            else if(algo == "JIQ")     dynamic_cast<JiqDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
-            else if (algo == "PI")     dynamic_cast<PiDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
+            if(algo == "JSQ")
+                dynamic_cast<JsqDispatcher*>(dispatcher)->update_server(n,finished_jobs.first);
+            else if(algo == "JIQ")
+                dynamic_cast<JiqDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
+            else if (algo == "PI")
+                dynamic_cast<PiDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
         }
 
         if( t % PRINTTIME == 0 && t > 0 ) {
@@ -96,7 +118,7 @@ int main(int argc, char *argv[])
      ***************** conclusions  ********************
      ***************************************************/
 
-    PrintEndSimulation(servers, *dispatcher );
+    PrintEndSimulation(servers, *dispatcher , buffer);
 
     /***************************************************
      ******************** Free  ************************
@@ -121,7 +143,7 @@ void PrintServerStatus(Server** servers, int t){
         cout << *servers[n] << endl;
     }
 }
-void PrintEndSimulation(Server** servers, Dispatcher &dispatcher){
+void PrintEndSimulation(Server** servers, Dispatcher &dispatcher, JBuffer& buffer){
     cout << "======================" << endl;
     cout << "=== Simulation End ===" << endl;
     cout << "======================" << endl;
@@ -132,6 +154,8 @@ void PrintEndSimulation(Server** servers, Dispatcher &dispatcher){
     }
 
     cout << dispatcher << endl;
+
+    cout << buffer << endl;
 
     assert(total_queued_jobs+Server::total_served_jobs == Dispatcher::total_dispatched_jobs &&
               "-W- Assert, Served Jobs + Queued Jobs != Total Dispatched Jobs" );

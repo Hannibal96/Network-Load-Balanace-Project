@@ -23,7 +23,7 @@ public:
         dispatched_jobs = 0;
         for(int i=0;i<num_servers; i++)
             routing_map[i] = 0;
-        buffer = JBuffer(1000+id,num_servers,threshold);
+        buffer = JBuffer(1000+id,num_servers,threshold,threshold);
     }
     ~Dispatcher() = default;
     // arrivals at the dispatcher
