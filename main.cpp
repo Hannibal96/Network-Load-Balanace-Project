@@ -15,7 +15,7 @@ using namespace std;
 
 void PrintServerStatus(Server** servers, int server_num, int t);
 void PrintEndSimulation(Server** servers, int server_num, Dispatcher &dispatcher, JBuffer &buffer);
-void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, map<string, string>& verbal_data);
+void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, map<string, string>& verbal_data); //ולא בפייתון cpp איך לכתוב פרסר לארגומנטים לא כמו מפגר ואפילו ב 
 double InitServersAndGetGamma(string servers_verb, double *server_rate, double load);
 
 int main(int argc, char *argv[])
