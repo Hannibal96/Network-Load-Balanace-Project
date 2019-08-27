@@ -9,7 +9,7 @@ int Dispatcher::total_dispatched_jobs = 0;
 int Dispatcher::get_destination(Server** servers)
 {
     int destination = rand() % num_servers_;
-    routing_map[destination] ++;
+    //routing_map[destination] ++;
     return destination;
 }
 
@@ -21,22 +21,13 @@ int Dispatcher::get_arrivals()
     return new_arraivals;
 }
 
-string Dispatcher::toString() const {
-
-    string dispatcher_print = "Dispatcher Number: "+::to_string(id_)+
-                              "\n  -dispached jobs: "+::to_string(dispatched_jobs)+"\n";
-    for (auto const& x : routing_map)
-        dispatcher_print += "   "+::to_string(x.first) +": "+::std::to_string(x.second)+"\n";
-
-    //dispatcher_print += buffer.toString();
-
-    return dispatcher_print;
-}
-
-std::ostream& operator<<(std::ostream& os, const Dispatcher& dsp)
-{
-    os << dsp.toString();
-    return os;
+void Dispatcher::update_routing_table(int server_id) {  // id = -1 meaning buffered
+    if(server_id == -1)
+        bufferd_jobs ++;
+    else if(server_id >= 0)
+        routing_map[server_id] ++;
+    else
+        assert("-W- Assert, Dispatcher::update_routing_table - server_id not valid" );
 }
 
 int PocDispatcher::get_destination(Server** servers, int poc )
@@ -58,7 +49,7 @@ int PocDispatcher::get_destination(Server** servers, int poc )
         }
     }
     assert(min_index >= 0 && "-W- Assert, PocDispatcher::get_destination : min_index < 0" );
-    routing_map[min_index] ++;
+    //routing_map[min_index] ++;
     return min_index;
 }
 
@@ -67,9 +58,22 @@ int JsqDispatcher::get_destination(Server** servers)
     int min_index = servers_heap_->GetMin();
     int new_queued_number = servers_heap_->GetVal(min_index) + 1;
     servers_heap_->UpdateKey(min_index, new_queued_number);
-    routing_map[min_index] ++;
+    //routing_map[min_index] ++;
     return min_index;
 }
+
+void JsqDispatcher::buffer_patch_remove(int destination)
+{
+    int new_queued_number = servers_heap_->GetVal(destination) - 1;
+    servers_heap_->UpdateKey(destination, new_queued_number);
+}
+
+void JsqDispatcher::buffer_patch_add(int destination)
+{
+    int new_queued_number = servers_heap_->GetVal(destination) + 1;
+    servers_heap_->UpdateKey(destination, new_queued_number);
+}
+
 
 void JsqDispatcher::update_server(int server_num, int finished_jobs)
 {
@@ -80,7 +84,7 @@ void JsqDispatcher::update_server(int server_num, int finished_jobs)
 
 int JiqDispatcher::get_destination(Server** servers){
     int destination = -1;
-    if(idle_servers.size() == 0)
+    if(idle_servers.empty())
         destination = rand() % num_servers_;
     else {
         int rand_idle = rand() % idle_servers.size();
@@ -88,7 +92,7 @@ int JiqDispatcher::get_destination(Server** servers){
         idle_servers.erase(std::remove(idle_servers.begin(), idle_servers.end(), destination), idle_servers.end());
     }
     assert(destination != -1 && "-W- Assert, JiqDispatcher::get_destination :   destination == -1" );
-    routing_map[destination] ++;
+    //routing_map[destination] ++;
     return destination;
 }
 
@@ -110,7 +114,7 @@ int PiDispatcher::get_destination(Server** servers){
             last_idle_server = destination;
     }
     assert(destination != -1 && "-W- Assert, PiDispatcher::get_destination :   destination == -1" );
-    routing_map[destination] ++;
+    //routing_map[destination] ++;
     return destination;
 }
 
@@ -121,6 +125,25 @@ void PiDispatcher::update_server(int server_num, bool is_idle){
 
 int RrDispatcher::get_destination(Server** servers){
     int destination = (current ++) % num_servers_;
-    routing_map[destination] ++ ;
+    //routing_map[destination] ++ ;
     return destination;
+}
+
+string Dispatcher::toString() const
+{
+    string dispatcher_print = "***************************************************\n"
+                              "***************** Dispatchers *********************\n"
+                              "***************************************************\n";
+    dispatcher_print += "Dispatcher Number: "+::to_string(id_)+
+                              "\n  -dispached jobs: "+::to_string(dispatched_jobs)+"\n";
+    for (auto const& x : routing_map)
+        dispatcher_print += "   "+::to_string(x.first) +": "+::std::to_string(x.second)+"\n";
+    dispatcher_print += "Buffered jobs: " + ::std::to_string(bufferd_jobs)+"\n";
+    return dispatcher_print;
+}
+
+std::ostream& operator<<(std::ostream& os, const Dispatcher& dsp)
+{
+    os << dsp.toString();
+    return os;
 }

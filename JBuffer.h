@@ -14,15 +14,15 @@ class JBuffer {
 public:
 
     JBuffer() = default;
-    JBuffer(int id, int servers_num, int threshold, int low_threshold, int buffer_max = std::numeric_limits<int>::max() )
+    JBuffer(int id, int servers_num,int high_threshold = std::numeric_limits<int>::max() ,int low_threshold = -1, int buffer_max = std::numeric_limits<int>::max() )
     {
         this->id = id;
         this->jobs_in_buffer = 0;
         jobs_queue = queue<Job>();
         for(int i = 0; i < servers_num ; i++)
-            routing_map[i] = 0;
+            buffer_routing_map[i] = 0;
         this->buffer_max = buffer_max;
-        this->threshold = threshold;
+        this->high_threshold = high_threshold;
         this->low_threshold = low_threshold;
     };
 
@@ -30,15 +30,20 @@ public:
     void AddJob(Job job);
     bool CheckReRoute(Server& server);
     bool CheckReturnToRoute(Server& server);
-    Job* SendJob(int time, int server_num);
+
+    int GetQueuedJobs();
+
+    Job SendJob(int time, int server_num);
     string toString() const ;
     friend std::ostream& operator<<(std::ostream& os, const JBuffer& s);
     static int total_buffered_jobs;
+    static unsigned long long total_waiting;
+
 
 protected:
-    int id, jobs_in_buffer, buffer_max, threshold, low_threshold;
+    int id, jobs_in_buffer, buffer_max, high_threshold, low_threshold;
     queue<Job> jobs_queue;
-    map<int,int> routing_map;
+    map<int,int> buffer_routing_map;
 };
 
 #endif //NETWORKSIMULATOR_JBUFFER_H

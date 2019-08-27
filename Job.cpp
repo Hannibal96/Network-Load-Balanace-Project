@@ -15,10 +15,11 @@ Job::Job(int time)
     job_number = number_of_jobs;
 }
 
-int Job::GetCreation() {   return creation_time; }
-int Job::GetExiting() {    return exiting_time;  }
-int Job::GetWaiting() {    return waiting_time;  }
-void Job::SetWaiting(int time) { waiting_time = time; };
+int Job::SetWaiting(int time) {
+    waiting_time = time - creation_time;
+    assert(waiting_time >= 0 && "-W- Assert, Job::SetWaiting job waiting time is negative" );
+    return waiting_time;
+};
 
 int Job::FinishJob(int time)
 {

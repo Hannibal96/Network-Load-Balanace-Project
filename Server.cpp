@@ -28,6 +28,7 @@ void Server::AddJob(Job job) {
     }
     jobs_queue.push(job);
     jobs_in_queue ++ ;
+    assert(jobs_in_queue == jobs_queue.size() && "-W- Assert, Server::AddJob jobs_in_queue != queue_max" );
 }
 
 int Server::GetQueuedJobs(){ return jobs_in_queue; }
@@ -38,10 +39,11 @@ std::pair<int,bool > Server::FinishJob(int time) {
 
     std::pair<int,bool> finished_jobs = std::pair<int ,bool>();
     finished_jobs.first = serving_jobs;
-    if(finished_jobs.first == jobs_in_queue)
+    if(finished_jobs.first == jobs_in_queue) {
         finished_jobs.second = true;
-    else
+    } else{
         finished_jobs.second = false;
+    }
 
     assert(jobs_in_queue == jobs_queue.size() && "-W- Assert, Server::FinishJob queue size mismatch" );
     for(int i=0 ; i< serving_jobs;i++) {
@@ -52,7 +54,7 @@ std::pair<int,bool > Server::FinishJob(int time) {
         assert(total_serving_time >= 0 && "-W- Assert, Server::FinishJob -  total_serving_time OERFLOW" );
 
         serving_time += job_service_time;
-        assert(job_service_time >= 0 && "-W- Assert, Server::FinishJob - serving_time OERFLOW" );
+        assert(serving_time >= 0 && "-W- Assert, Server::FinishJob - serving_time OERFLOW" );
 
         jobs_queue.pop();
         jobs_in_queue --;
@@ -65,7 +67,8 @@ std::pair<int,bool > Server::FinishJob(int time) {
 
 string Server::toString() const {
     return "Server Id: "+::to_string(id)+
-        "\n  -mu: "+::to_string(mu)+", avg serving: "+::to_string(-1 + 1/mu)+
+        "\n  -mu: "+::to_string(mu)+
+        "\n  -avg serving: "+::to_string(-1 + 1/mu)+
         "\n  -jobs_in_queue: "+::to_string(jobs_in_queue)+
         "\n  -served_jobs: "+::to_string(served_jobs)+
         "\n  -serving_time: "+::to_string(serving_time)+

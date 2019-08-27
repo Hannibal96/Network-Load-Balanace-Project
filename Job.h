@@ -12,12 +12,12 @@ public:
     ~Job() = default;
 
     int FinishJob(int time);
-
-    int GetCreation();
-    int GetExiting();
-    int GetWaiting();
+    int GetCreation(){ return creation_time; };
+    int GetExiting(){ return  exiting_time;};
+    int GetWaiting(){ return  waiting_time;};
+    int GetSerial(){ return  job_number;};
     string toString() const ;
-    void SetWaiting(int time);
+    int SetWaiting(int time);
 
     friend std::ostream& operator<<(std::ostream& os, const Job& s);
 
