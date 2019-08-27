@@ -65,7 +65,7 @@ std::pair<int,bool > Server::FinishJob(int time) {
 
 string Server::toString() const {
     return "Server Id: "+::to_string(id)+
-        "\n  -mu: "+::to_string(mu)+
+        "\n  -mu: "+::to_string(mu)+", avg serving: "+::to_string(-1 + 1/mu)+
         "\n  -jobs_in_queue: "+::to_string(jobs_in_queue)+
         "\n  -served_jobs: "+::to_string(served_jobs)+
         "\n  -serving_time: "+::to_string(serving_time)+

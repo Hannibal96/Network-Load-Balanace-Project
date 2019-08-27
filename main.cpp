@@ -9,19 +9,15 @@
 
 using namespace std;
 
-#define TIME 1000000
-#define PRINTTIME 1000000
-#define SERVERS_NUM 10
-#define GAMMA 10
-#define MU 0.5
-
-
 /***************************************************
  **************** declerations  ********************
  ***************************************************/
 
-void PrintServerStatus(Server** servers, int t);
-void PrintEndSimulation(Server** servers, Dispatcher &dispatcher, JBuffer &buffer);
+void PrintServerStatus(Server** servers, int server_num, int t);
+void PrintEndSimulation(Server** servers, int server_num, Dispatcher &dispatcher, JBuffer &buffer);
+void PrintInfo(int time, int servers_num, double gamma, string algo);
+void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, map<string, string>& verbal_data); //איך לכתוב פרסר לארגומנטים לא כמו מפגר
+double InitServersAndGetGamma(string servers_verb, double *server_rate, double load);                              //ולא בפייתון cpp ואפילו ב
 
 int main(int argc, char *argv[])
 {
@@ -30,14 +26,26 @@ int main(int argc, char *argv[])
      ******************* parsing ***********************
      ***************************************************/
 
-    int server_num = SERVERS_NUM;
-    int POC = 3;
-    string algo = argv[1];
-    double server_rate[server_num];
-    for (int n =0; n < server_num; n++){
-        server_rate[n] = (double)(1+n)/(1+server_num);
-    }
-    double gamma = GAMMA;
+    map<string, double > numeric_data;
+    map<string, string> verbal_data;
+    ParseArguments(argc, argv, numeric_data, verbal_data);
+    int server_num = (int)numeric_data["Servers"], time = (int)numeric_data["Time"];
+
+    int print_time = std::numeric_limits<int>::max();
+    if ( numeric_data.find("PrintTime") != numeric_data.end() )
+        print_time = (int)numeric_data["PrintTime"];
+
+    double server_rate[ server_num ];
+    double gamma = InitServersAndGetGamma(verbal_data["Servers"], server_rate, numeric_data["Load"]);
+
+    string algo = verbal_data["Algorithm"];
+    int POC = -1;
+    if ( algo == "POC" )
+        POC = (int)numeric_data["POC"];
+
+    PrintInfo(time, server_num, gamma, algo);
+
+
 
     int threshold = 100;
     int low_threshold = 10;
@@ -62,44 +70,28 @@ int main(int argc, char *argv[])
         servers[n] = new Server(n, server_rate[n]);
     }
 
-
     JBuffer buffer = JBuffer(1001, server_num, threshold, low_threshold);
-
 
     /***************************************************
      ****************** main loop **********************
      ***************************************************/
 
-    for (int t = 0; t < TIME; t++) {
+    for (int t = 0; t < time; t++) {
         int arrivals = dispatcher->get_arrivals();
         for(int a=0; a<arrivals ; a++){
+            Job job = Job(t);
             int destination = -1;
             if(algo == "POC"){
+                assert(POC != -1 && "-W- Assert, main loop : POC was not initialized" );
                 destination = dynamic_cast<PocDispatcher *>(dispatcher)->get_destination(servers, POC);
             } else{
                 destination = dispatcher->get_destination(servers);
             }
             assert(destination != -1 && "-W- Assert, main loop : destination was not initialized" );
-            Job job = Job(t);
-
-            if(buffer.CheckReRoute(*servers[destination])) {
-                //TODO: uncount routing
-                //cout << "ReRoute" << endl;
-                buffer.AddJob(job);
-            }
-            else {
-                servers[destination]->AddJob(job);
-            }
-            if(buffer.CheckReturnToRoute(*servers[destination])){
-                Job* buffered_job = buffer.SendJob(t,destination);
-                while( buffered_job != nullptr ){
-                    servers[destination]->AddJob(*buffered_job);
-                    buffered_job = buffer.SendJob(t,destination);
-                }
-            }
+            servers[destination]->AddJob(job);
         }
 
-        for(int n=0;n<SERVERS_NUM;n++) {
+        for(int n=0; n<server_num; n++) {
             pair<int, bool> finished_jobs = servers[n]->FinishJob(t);
             if(algo == "JSQ")
                 dynamic_cast<JsqDispatcher*>(dispatcher)->update_server(n,finished_jobs.first);
@@ -109,8 +101,8 @@ int main(int argc, char *argv[])
                 dynamic_cast<PiDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
         }
 
-        if( t % PRINTTIME == 0 && t > 0 ) {
-            PrintServerStatus(servers, t);
+        if( t % print_time == 0 && t > 0 ) {
+            PrintServerStatus(servers, server_num, t);
         }
     }
 
@@ -118,13 +110,13 @@ int main(int argc, char *argv[])
      ***************** conclusions  ********************
      ***************************************************/
 
-    PrintEndSimulation(servers, *dispatcher , buffer);
+    PrintEndSimulation(servers, server_num, *dispatcher , buffer);
 
     /***************************************************
      ******************** Free  ************************
      ***************************************************/
 
-    for(int n=0; n<SERVERS_NUM; n++){
+    for(int n=0; n<server_num; n++){
         delete servers[n];
     }
     delete dispatcher;
@@ -136,32 +128,102 @@ int main(int argc, char *argv[])
  ***************************************************/
 
 
-void PrintServerStatus(Server** servers, int t){
+void PrintServerStatus(Server** servers, int server_num, int t)
+{
     cout << "====================" << endl;
     cout << "Time: " << t << endl;
-    for (int n = 0; n < SERVERS_NUM; n++) {
+    for (int n = 0; n < server_num; n++) {
         cout << *servers[n] << endl;
     }
 }
-void PrintEndSimulation(Server** servers, Dispatcher &dispatcher, JBuffer& buffer){
+
+void PrintEndSimulation(Server** servers, int server_num , Dispatcher &dispatcher, JBuffer& buffer)
+{
     cout << "======================" << endl;
     cout << "=== Simulation End ===" << endl;
     cout << "======================" << endl;
     int total_queued_jobs = 0;
-    for (int n = 0; n < SERVERS_NUM; n++) {
+    for (int n = 0; n < server_num; n++) {
         cout << *servers[n] << endl;
         total_queued_jobs += servers[n]->GetQueuedJobs();
     }
-
     cout << dispatcher << endl;
-
     cout << buffer << endl;
-
     assert(total_queued_jobs+Server::total_served_jobs == Dispatcher::total_dispatched_jobs &&
-              "-W- Assert, Served Jobs + Queued Jobs != Total Dispatched Jobs" );
+           "-W- Assert, Served Jobs + Queued Jobs != Total Dispatched Jobs" );
 
     cout << "======================" << endl;
     cout << "Total serving time average: " << (double)Server::total_serving_time/Server::total_served_jobs << endl;
     cout << "======================" << endl;
 }
 
+void PrintInfo(int time, int servers_num, double gamma, string algo)
+{
+    cout << "-I- Stating simulation with:" << endl;
+    cout << "\t " << servers_num << " servers, " << "incoming rate of " << gamma << " under load balancing of " <<
+            algo << ", for " << time << " time units" << endl;
+}
+
+void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, map<string, string>& verbal_data)
+{
+    for(int i=1; i<argc; i++){
+        string converted_arg = argv[i];
+        if(converted_arg == "--Time") {
+            numeric_data["Time"] = atoi(argv[++i]);
+        }
+        else if(converted_arg == "--PrintTime") {
+            numeric_data["PrintTime"] = atoi(argv[++i]);
+        }
+        else if(converted_arg == "--Servers") {
+            numeric_data["Servers"] = atoi(argv[++i]);
+            verbal_data["Servers"] = argv[++i];
+        }
+        else if(converted_arg == "--Dispatchers") {         // Currently testing only one, to expand to multiple need
+            numeric_data["Dispatchers"] = atoi(argv[++i]);  // to make small adjustment from the server parsing
+            verbal_data["Algorithm"] = argv[++i];
+            if( verbal_data["Algorithm"] == "POC" )
+                numeric_data["POC"] = atoi(argv[++i]);
+        }
+        else if(converted_arg == "--Load") {
+            numeric_data["Load"] = stod(argv[++i]);
+        }
+        else if(converted_arg == "--Buffer") {              // Likewise
+            numeric_data["Buffer"] = atoi(argv[++i]);
+            verbal_data["Buffer"] = argv[++i];
+        }
+        else if(converted_arg == "--Help"){
+            cout << "-Help message:" << endl;
+            cout << "--Example: \n\t--Servers 10 5,1;5,10; --Dispatchers 1 JSQ --Time 100000 --Load 0.8" << endl;
+            exit(0);
+        }
+        else {
+            cout << "-E- Wrong argument inserted" << endl;
+            exit(1);
+        }
+    }
+}
+
+double InitServersAndGetGamma(string servers_verb, double *server_rate, double load)
+{
+    double total_serving_rates = 0.0;
+    int offset = 0 ;
+    string delimiter = ";", inner_delimiter = ",";
+    size_t pos = 0;
+    size_t sub_pos = 0;
+    std::string token_dual;
+    while ((pos = servers_verb.find(delimiter)) != std::string::npos) {
+        token_dual = servers_verb.substr(0, pos);
+        sub_pos = token_dual.find(inner_delimiter);
+        int number = stoi(token_dual.substr(0, sub_pos));
+        token_dual.erase(0, sub_pos + delimiter.length());
+        sub_pos = token_dual.find(inner_delimiter);
+        int value = stoi(token_dual.substr(0, sub_pos));
+        for(int i=0;i<number;i++) {
+            server_rate[offset + i] = 1/(1-value+(value/0.5));
+            total_serving_rates += (1/server_rate[offset + i]) - 1;
+        }
+        offset += number;
+        servers_verb.erase(0, pos + delimiter.length());
+    }
+    return load * total_serving_rates;
+}
