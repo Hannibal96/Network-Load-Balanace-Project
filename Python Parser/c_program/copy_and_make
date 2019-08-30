@@ -1,3 +1,0 @@
-#!/bin/bash
-cp ~/CLionProjects/LB_Parser/main.cpp ~/Desktop/Parser;
-make -f makefile

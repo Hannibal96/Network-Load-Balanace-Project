@@ -172,7 +172,6 @@ int main(int argc, char *argv[])
  ***************** functions  **********************
  ***************************************************/
 
-
 void PrintServerStatus(Server** servers, int server_num, int t)
 {
     cout << "********************" << endl;
