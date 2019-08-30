@@ -16,8 +16,8 @@ using namespace std;
 void PrintServerStatus(Server** servers, int server_num, int t);
 void PrintEndSimulation(Server** servers, int server_num, Dispatcher &dispatcher, JBuffer &buffer);
 void PrintInfo(int time, int servers_num, double gamma, string algo, int HighTH, int LowTH);
-void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, map<string, string>& verbal_data); //איך לכתוב פרסר לארגומנטים לא כמו מפגר
-double InitServersAndGetGamma(string servers_verb, double *server_rate, double load);                              //ולא בפייתון cpp ואפילו ב
+void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, map<string, string>& verbal_data);
+double InitServersAndGetGamma(string servers_verb, double *server_rate, int servers_num, double load);
 
 int main(int argc, char *argv[])
 {
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
         print_time = (int)numeric_data["PrintTime"];
 
     double server_rate[ server_num ];
-    double gamma = InitServersAndGetGamma(verbal_data["Servers"], server_rate, numeric_data["Load"]);
+    double gamma = InitServersAndGetGamma(verbal_data["Servers"], server_rate, server_num, numeric_data["Load"]);
 
     string algo = verbal_data["Algorithm"];
     int POC = -1;
@@ -44,6 +44,10 @@ int main(int argc, char *argv[])
         POC = (int) numeric_data["POC"];
         if(!POC){
             cout << "-E- POC algo was chosen but no POC parameter was entered" << endl;
+            exit(1);
+        }
+        if(POC >= server_num){
+            cout << "-E- POC parameter bigger or equal to number of servers, use smaller POC or JSQ" << endl;
             exit(1);
         }
     }
@@ -88,10 +92,6 @@ int main(int argc, char *argv[])
 
     for (int t = 0; t < time; t++) {
         int arrivals = dispatcher->get_arrivals();                        // get arrivals
-
-        if (t == 1000000)
-            cout << "DEBUG" << endl;
-
         for(int a=0; a<arrivals ; a++){                                   // send to destinations
             Job job = Job(t);
             int destination = -1;
@@ -274,7 +274,7 @@ void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, 
     }
 }
 
-double InitServersAndGetGamma(string servers_verb, double *server_rate, double load)
+double InitServersAndGetGamma(string servers_verb, double *server_rate, int servers_num, double load)
 {
     double total_serving_rates = 0.0;
     int offset = 0 ;
@@ -295,6 +295,10 @@ double InitServersAndGetGamma(string servers_verb, double *server_rate, double l
         }
         offset += number;
         servers_verb.erase(0, pos + delimiter.length());
+    }
+    if(offset != servers_num) {
+        cout << "-E- number of servers dosen't consist with server rate info" << endl;
+        exit(1);
     }
     return load * total_serving_rates;
 }

@@ -77,6 +77,7 @@ int PocDispatcher::get_destination(Server** servers, int poc )
 int JsqDispatcher::get_destination()
 {
     int min_index = servers_heap_->GetMin();
+    assert(servers_heap_->GetVal(min_index) >= 0 && "-W- Assert, JsqDispatcher::get_destination : min_index value < 0" );
     return min_index;
 }
 
