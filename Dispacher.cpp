@@ -81,7 +81,7 @@ int JsqDispatcher::get_destination()
 }
 
 int JiqDispatcher::get_destination(){
-    int destination = -1;
+    int destination;
     if(idle_servers.empty()) {
         destination = rand() % num_servers_;
     }
@@ -89,21 +89,16 @@ int JiqDispatcher::get_destination(){
         int rand_idle = rand() % idle_servers.size();
         destination = idle_servers[rand_idle];
     }
-    assert(destination != -1 && "-W- Assert, JiqDispatcher::get_destination :   destination == -1" );
+    assert(destination >= 0 && "-W- Assert, JiqDispatcher::get_destination :   destination == -1" );
     return destination;
 }
 
 int PiDispatcher::get_destination(){
-    int destination = -1;
-    if(idle_servers.size() == 0) {
-        destination = last_idle_server;
+    if( idle_servers.empty() ) {
+        return last_idle_server;
     }
-    else {
-        int rand_idle = rand() % idle_servers.size();
-        destination = idle_servers[rand_idle];
-    }
-    assert(destination != -1 && "-W- Assert, PiDispatcher::get_destination :   destination == -1" );
-    return destination;
+    int rand_idle = rand() % idle_servers.size();
+    return idle_servers[rand_idle];
 }
 
 int RrDispatcher::get_destination(){
@@ -122,11 +117,13 @@ void JsqDispatcher::update_server_route(int destination)
 {
     int new_queued_number = servers_heap_->GetVal(destination) + 1;
     servers_heap_->UpdateKey(destination, new_queued_number);
+    assert(new_queued_number == servers_heap_->GetVal(destination) &&
+            "-W- Assert, JsqDispatcher::update_server :   new_queued_number < 0" );
 }
 
 void PiDispatcher::update_server_route(int destination){
     idle_servers.erase(std::remove(idle_servers.begin(), idle_servers.end(), destination), idle_servers.end());
-    if(idle_servers.size() == 0)
+    if(idle_servers.empty())
         last_idle_server = destination;
 }
 
@@ -146,7 +143,10 @@ void JsqDispatcher::update_server_finish(int server_num, int finished_jobs)
 {
     int new_queued_number = servers_heap_->GetVal(server_num) - finished_jobs;
     assert(new_queued_number >= 0 && "-W- Assert, JsqDispatcher::update_server :   new_queued_number < 0" );
-    servers_heap_->UpdateKey(server_num, new_queued_number);
+    if(finished_jobs > 0)
+        servers_heap_->UpdateKey(server_num, new_queued_number);
+    assert(new_queued_number == servers_heap_->GetVal(server_num) &&
+           "-W- Assert, JsqDispatcher::update_server :   new_queued_number < 0" );
 }
 
 void JiqDispatcher::update_server_finish(int server_num, pair<int, bool> finish_jobs){

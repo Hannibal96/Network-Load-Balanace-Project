@@ -74,10 +74,13 @@ int main(int argc, char *argv[])
     }
 
     JBuffer buffer;
-    if( high_threshold == low_threshold && high_threshold == 0)
-        buffer = JBuffer(1001, server_num);                         // deafulting buffer, not affecting simulator
-    else
+    bool buffer_exist = not (high_threshold == low_threshold && high_threshold == 0);
+    if(buffer_exist) {
         buffer = JBuffer(1001, server_num, high_threshold, low_threshold);
+    }
+    else {
+        buffer = JBuffer(1001, server_num);                             // deafulting buffer, not affecting simulator
+    }
 
     /***************************************************
      ****************** main loop **********************
@@ -85,6 +88,10 @@ int main(int argc, char *argv[])
 
     for (int t = 0; t < time; t++) {
         int arrivals = dispatcher->get_arrivals();                        // get arrivals
+
+        if (t == 1000000)
+            cout << "DEBUG" << endl;
+
         for(int a=0; a<arrivals ; a++){                                   // send to destinations
             Job job = Job(t);
             int destination = -1;
@@ -98,36 +105,44 @@ int main(int argc, char *argv[])
 
             bool reRoute = buffer.CheckReRoute( *servers[destination] );
             if( reRoute ){                                                     // buffer related routing
+                assert( buffer_exist && "-W- Assert, ReRoute : buffer dosen't exist but enter buffer condition" );
                 dispatcher->update_routing_table(-1);
                 buffer.AddJob(job);
             }
             else{                                                             // regular routing
                 bool returnToRoute = buffer.CheckReturnToRoute( *servers[destination] );
                 if( returnToRoute ){
+                    assert( buffer_exist && "-W- Assert, returnToRoute : buffer dosen't exist but enter buffer condition" );
                     while ( buffer.GetQueuedJobs() ) {
                         Job returned_job = buffer.SendJob(time, destination);
                         servers[destination]->AddJob(returned_job);
-                        if(algo == "RoundRobin")
-                            dynamic_cast<RrDispatcher*>(dispatcher)->update_server_route();
-                        else
+                        if(algo == "RoundRobin") {
+                            dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
+                        }
+                        else {
                             dispatcher->update_server_route(destination);
+                        }
                     }
                 }
                 dispatcher->update_routing_table(destination);
                 servers[destination]->AddJob(job);
-                if(algo == "RoundRobin")
-                    dynamic_cast<RrDispatcher*>(dispatcher)->update_server_route();
-                else
+                if(algo == "RoundRobin") {
+                    dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
+                }
+                else {
                     dispatcher->update_server_route(destination);
+                }
             }
         }
 
         for(int n=0; n<server_num; n++) {                                   // serve jobs and update dispatcher information
             pair<int, bool> finished_jobs = servers[n]->FinishJob(t);
-            if(algo == "JSQ")
-                dynamic_cast<JsqDispatcher*>(dispatcher)->update_server_finish(n,finished_jobs.first);
-            else if(algo == "JIQ" || algo == "PI")
+            if(algo == "JSQ") {
+                dynamic_cast<JsqDispatcher *>(dispatcher)->update_server_finish(n, finished_jobs.first);
+            }
+            else if(algo == "JIQ" || algo == "PI") {
                 dynamic_cast<JiqDispatcher *>(dispatcher)->update_server_finish(n, finished_jobs);
+            }
         }
 
         if( t % print_time == 0 && t > 0 ) {
