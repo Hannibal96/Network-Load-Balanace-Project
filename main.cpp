@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 
     JBuffer buffer;
     if( high_threshold == low_threshold && high_threshold == 0)
-        buffer = JBuffer(1001, server_num);
+        buffer = JBuffer(1001, server_num);                         // deafulting buffer, not affecting simulator
     else
         buffer = JBuffer(1001, server_num, high_threshold, low_threshold);
 
@@ -92,42 +92,47 @@ int main(int argc, char *argv[])
                 assert(POC != -1 && "-W- Assert, main loop : POC was not initialized" );
                 destination = dynamic_cast<PocDispatcher *>(dispatcher)->get_destination(servers, POC);
             } else{
-                destination = dispatcher->get_destination(servers);
+                destination = dispatcher->get_destination();
             }
             assert(destination != -1 && "-W- Assert, main loop : destination was not initialized" );
 
-            if(buffer.CheckReRoute( *servers[destination] )){               // buffer related routing
-                if(algo == "JSQ")
-                    dynamic_cast<JsqDispatcher*>(dispatcher)->buffer_patch_remove(destination);
+            bool reRoute = buffer.CheckReRoute( *servers[destination] );
+            if( reRoute ){                                                     // buffer related routing
                 dispatcher->update_routing_table(-1);
                 buffer.AddJob(job);
             }
-            else{                                                           // regular routing
-                if(buffer.CheckReturnToRoute( *servers[destination] )){
+            else{                                                             // regular routing
+                bool returnToRoute = buffer.CheckReturnToRoute( *servers[destination] );
+                if( returnToRoute ){
                     while ( buffer.GetQueuedJobs() ) {
                         Job returned_job = buffer.SendJob(time, destination);
                         servers[destination]->AddJob(returned_job);
-                        if(algo == "JSQ")
-                            dynamic_cast<JsqDispatcher*>(dispatcher)->buffer_patch_add(destination);
+                        if(algo == "RoundRobin")
+                            dynamic_cast<RrDispatcher*>(dispatcher)->update_server_route();
+                        else
+                            dispatcher->update_server_route(destination);
                     }
                 }
                 dispatcher->update_routing_table(destination);
                 servers[destination]->AddJob(job);
+                if(algo == "RoundRobin")
+                    dynamic_cast<RrDispatcher*>(dispatcher)->update_server_route();
+                else
+                    dispatcher->update_server_route(destination);
             }
         }
 
         for(int n=0; n<server_num; n++) {                                   // serve jobs and update dispatcher information
             pair<int, bool> finished_jobs = servers[n]->FinishJob(t);
             if(algo == "JSQ")
-                dynamic_cast<JsqDispatcher*>(dispatcher)->update_server(n,finished_jobs.first);
-            else if(algo == "JIQ")
-                dynamic_cast<JiqDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
-            else if (algo == "PI")
-                dynamic_cast<PiDispatcher *>(dispatcher)->update_server(n, finished_jobs.second);
+                dynamic_cast<JsqDispatcher*>(dispatcher)->update_server_finish(n,finished_jobs.first);
+            else if(algo == "JIQ" || algo == "PI")
+                dynamic_cast<JiqDispatcher *>(dispatcher)->update_server_finish(n, finished_jobs);
         }
 
         if( t % print_time == 0 && t > 0 ) {
             PrintServerStatus(servers, server_num, t);
+            cout << buffer << endl;
         }
     }
 

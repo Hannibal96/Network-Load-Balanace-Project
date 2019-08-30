@@ -10,6 +10,8 @@
 #include "Server.h"
 #include "JBuffer.h"
 
+using namespace std;
+
 class Dispatcher
 {
 
@@ -26,11 +28,10 @@ public:
             routing_map[i] = 0;
     }
     ~Dispatcher() = default;
-    virtual int get_arrivals();
-    virtual int get_destination(Server** servers); // random by default. Overridden by derived classes.
-
+    int get_arrivals();
+    virtual int get_destination();              // random by default. Overridden by derived classes.
     void update_routing_table(int server_id);
-
+    virtual void update_server_route(int destination);
     string toString() const ;
     friend std::ostream& operator<<(std::ostream& os, const Dispatcher& s);
 
@@ -43,7 +44,6 @@ protected:
     default_random_engine main_generator_;
     poisson_distribution<int> poisson_distribution_;
 };
-
 
 class PocDispatcher: public Dispatcher{
 public:
@@ -59,11 +59,9 @@ public:
             : Dispatcher(id, num_servers, load)
     {        servers_heap_ = new MinHeap(num_servers);    }
     ~JsqDispatcher()  {  delete servers_heap_;    }
-    int get_destination(Server** servers) override;
-    void update_server(int server_num, int finished_jobs);
-
-    void buffer_patch_add(int destination);
-    void buffer_patch_remove(int destination);
+    int get_destination() override;
+    void update_server_route(int server_num);
+    void update_server_finish(int server_num, int finished_jobs);
 
 protected:
     MinHeap* servers_heap_;
@@ -78,14 +76,14 @@ public:
             idle_servers.push_back(i);
     };
     ~JiqDispatcher() = default;
-    int get_destination(Server** servers) override;
-    void update_server(int server_num, bool is_idle);
+    int get_destination() override;
+    virtual void update_server_route(int server_num);
+    virtual void update_server_finish(int server_num, pair<int, bool> finish_jobs);
 
 protected:
     vector<int> idle_servers;
 
 };
-
 
 class PiDispatcher: public JiqDispatcher{
 public:
@@ -94,12 +92,11 @@ public:
         this->last_idle_server = -1;
     };
     ~PiDispatcher() = default;
-    int get_destination(Server** servers) override;
-    void update_server(int server_num, bool is_idle);
+    int get_destination() override;
+    void update_server_route(int server_num) override;
 
 protected:
     int last_idle_server;
-
 };
 
 class RrDispatcher: public Dispatcher{
@@ -109,13 +106,13 @@ public:
         this->current = rand() % num_servers;
     };
     ~RrDispatcher() = default;
-    int get_destination(Server** servers) override;
+    int get_destination() override;
+    void update_server_route();
 
 protected:
     int current;
 
 };
-
 
 
 
