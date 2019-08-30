@@ -5,6 +5,7 @@
 #include "JBuffer.h"
 
 int JBuffer::total_buffered_jobs = 0;
+unsigned long long JBuffer::total_waiting = 0;
 
 void JBuffer::AddJob(Job job)
 {
@@ -15,12 +16,13 @@ void JBuffer::AddJob(Job job)
     }
     jobs_queue.push(job);
     jobs_in_buffer ++ ;
+    total_buffered_jobs ++;
 }
 
 
 bool JBuffer::CheckReRoute(Server& server)
 {
-    if(server.GetQueuedJobs() >= threshold)
+    if(server.GetQueuedJobs() >= high_threshold)
         return true;
     return false;
 }
@@ -32,27 +34,37 @@ bool JBuffer::CheckReturnToRoute(Server& server)
     return false;
 }
 
-Job* JBuffer::SendJob(int time, int server_num)
+Job JBuffer::SendJob(int time, int server_num)
 {
-    if(jobs_queue.empty())
-        return nullptr;
-    Job* re_routed_job = &jobs_queue.front();
+    if(jobs_queue.empty()) {
+        assert("-W- Assert, JBuffer::SendJob try to send Job from buffer with buffer queue empty");
+    }
+    Job re_routed_job = jobs_queue.front();
     jobs_queue.pop();
-    re_routed_job->SetWaiting(time);
+    total_waiting += re_routed_job.SetWaiting(time);
+    assert(total_waiting >= 0 && "-W- Assert, JBuffer::SendJob total_waiting_time OVERFLOW" );
+
     jobs_in_buffer --;
     assert(jobs_in_buffer >= 0  && "-W- Assert, JBuffer::SendJob jobs_in_buffer < 0" );
     assert(jobs_in_buffer == jobs_queue.size()  && "-W- Assert, JBuffer::SendJob jobs_in_buffer != jobs_queue.size()" );
-    routing_map[server_num] ++ ;
+    buffer_routing_map[server_num] ++ ;
     return re_routed_job;
 }
 
+int JBuffer::GetQueuedJobs(){    return jobs_in_buffer;  }
 
 string JBuffer::toString() const
 {
-    string buffer_print = "Buffer Id: "+::to_string(id)+
+    string buffer_print = "***************************************************\n"
+                          "******************** Buffers **********************\n"
+                          "***************************************************\n";
+    buffer_print += "Buffer Id: "+::to_string(id)+
                           "\n  -jobs_in_buffer: "+::to_string(jobs_in_buffer)+"\n";
-    for (auto const& x : routing_map)
+    for (auto const& x : buffer_routing_map)
         buffer_print += "   "+::to_string(x.first) +": "+::std::to_string(x.second)+"\n";
+    buffer_print += "  -total buffered jobs: " + ::to_string(total_buffered_jobs);
+    buffer_print += "\n  -total waiting time: " + ::to_string(total_waiting);
+    buffer_print += "\n  -average waiting time: " + ::to_string(((double)total_waiting)/total_buffered_jobs);
     return buffer_print;
 }
 
