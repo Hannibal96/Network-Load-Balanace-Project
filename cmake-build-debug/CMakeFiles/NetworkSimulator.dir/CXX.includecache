@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.cpp
-Dispacher.h
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h
-
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h
 defs.h
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
@@ -71,4 +67,16 @@ set
 -
 utility
 -
+
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/main.cpp
+defs.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
+Server.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Server.h
+Dispacher.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h
+Job.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
+JBuffer.h
+C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/JBuffer.h
 
