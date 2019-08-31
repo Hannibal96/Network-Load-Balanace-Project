@@ -67,6 +67,15 @@ protected:
     MinHeap* servers_heap_;
 };
 
+class OptDispatcher : public Dispatcher
+{
+public:
+    OptDispatcher(int id, int num_servers, double load)
+            : Dispatcher(id, num_servers, load) {}
+    ~OptDispatcher() = default;
+    int get_destination(Server** servers) ;
+};
+
 class JiqDispatcher: public Dispatcher{
 public:
     JiqDispatcher(int id, int num_servers, double load)

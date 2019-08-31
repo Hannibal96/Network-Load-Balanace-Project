@@ -133,7 +133,7 @@ void MinHeap::UpdateKey(int i, int val)
 
     double old_val = heap_[i].queue_size_;
 
-    heap_[i].queue_size_ = val + 0.25*((double)rand() / (RAND_MAX));
+    heap_[i].queue_size_ = val + 0.95*((double)rand() / (RAND_MAX));
 
     if (old_val == val)
     {

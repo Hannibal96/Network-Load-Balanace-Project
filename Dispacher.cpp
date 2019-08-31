@@ -28,11 +28,11 @@ string Dispatcher::toString() const
     string dispatcher_print = "***************************************************\n"
                               "***************** Dispatchers *********************\n"
                               "***************************************************\n";
-    dispatcher_print += "Dispatcher Number: "+::to_string(id_)+
-                        "\n  -dispached jobs: "+::to_string(dispatched_jobs)+"\n";
+    dispatcher_print += "Dispatcher Number: "+to_string(id_)+
+                        "\n  -dispached jobs: "+to_string(dispatched_jobs)+"\n";
     for (auto const& x : routing_map)
-        dispatcher_print += "   "+::to_string(x.first) +": "+::std::to_string(x.second)+"\n";
-    dispatcher_print += "Buffered jobs: " + ::std::to_string(bufferd_jobs)+"\n";
+        dispatcher_print += "   "+to_string(x.first) +": "+to_string(x.second)+"\n";
+    dispatcher_print += "Buffered jobs: " + to_string(bufferd_jobs)+"\n";
     return dispatcher_print;
 }
 
@@ -78,6 +78,23 @@ int JsqDispatcher::get_destination()
 {
     int min_index = servers_heap_->GetMin();
     assert(servers_heap_->GetVal(min_index) >= 0 && "-W- Assert, JsqDispatcher::get_destination : min_index value < 0" );
+    return min_index;
+}
+
+int OptDispatcher::get_destination(Server** servers)
+{
+    int min_index = -1;
+    double min_value = std::numeric_limits<double>::max();
+    for(int s_idx = 0; s_idx < num_servers_; s_idx++){
+        double avg_serving = (1/(servers[s_idx]->GetMU())) - 1;
+        double estimated = servers[s_idx]->GetQueuedJobs()/avg_serving;
+        if(estimated < min_value)
+        {
+            min_value = estimated;
+            min_index = s_idx;
+        }
+    }
+    assert(min_index >= 0 && "-W- Assert, OptDispatcher::get_destination : min_index was not init" );
     return min_index;
 }
 

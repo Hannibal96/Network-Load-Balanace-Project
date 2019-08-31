@@ -16,6 +16,7 @@ public:
     std::pair<int,bool > FinishJob(int time);
 
     int GetQueuedJobs();
+    double GetMU();
 
     string toString() const ;
 

@@ -65,6 +65,8 @@ std::pair<int,bool > Server::FinishJob(int time) {
     return finished_jobs;
 }
 
+double Server::GetMU(){    return mu;}
+
 string Server::toString() const {
     return "Server Id: "+::to_string(id)+
         "\n  -mu: "+::to_string(mu)+

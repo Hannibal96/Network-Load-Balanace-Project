@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
     else if(algo == "JSQ")        dispatcher = new JsqDispatcher(0, server_num, gamma);
     else if(algo == "JIQ")        dispatcher = new JiqDispatcher(0, server_num, gamma);
     else if (algo == "PI")        dispatcher = new PiDispatcher(0, server_num, gamma);
+    else if (algo == "Optimal")   dispatcher = new OptDispatcher(0, server_num, gamma);
     else{
         cout << "-E- Worng algorithm " << endl;
         exit(1);
@@ -98,7 +99,10 @@ int main(int argc, char *argv[])
             if(algo == "POC"){
                 assert(POC != -1 && "-W- Assert, main loop : POC was not initialized" );
                 destination = dynamic_cast<PocDispatcher *>(dispatcher)->get_destination(servers, POC);
-            } else{
+            } else if(algo == "Optimal"){
+                destination = dynamic_cast<OptDispatcher *>(dispatcher)->get_destination(servers);
+            }
+            else{
                 destination = dispatcher->get_destination();
             }
             assert(destination != -1 && "-W- Assert, main loop : destination was not initialized" );
