@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.cpp
-Dispacher.h
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h
-
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Dispacher.h
 defs.h
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
@@ -31,10 +27,6 @@ C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/Job.h
 defs.h
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/defs.h
-
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/MinHeap.cpp
-MinHeap.h
-C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/MinHeap.h
 
 C:/Users/Neria/Desktop/Technion/Projects/Jose/network_simulator/NetworkSimulator/MinHeap.h
 defs.h

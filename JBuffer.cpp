@@ -4,7 +4,7 @@
 
 #include "JBuffer.h"
 
-int JBuffer::total_buffered_jobs = 0;
+unsigned long long JBuffer::total_buffered_jobs = 0;
 unsigned long long JBuffer::total_waiting = 0;
 
 void JBuffer::AddJob(Job job)

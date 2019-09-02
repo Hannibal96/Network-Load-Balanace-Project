@@ -30,6 +30,9 @@ int main(int argc, char *argv[])
     map<string, string> verbal_data;
     ParseArguments(argc, argv, numeric_data, verbal_data);
     int server_num = (int)numeric_data["Servers"], time = (int)numeric_data["Time"];
+    int sample_rate = time/(1000000);
+    if(sample_rate == 0)
+        sample_rate = 1;
 
     int print_time = std::numeric_limits<int>::max();
     if ( numeric_data.find("PrintTime") != numeric_data.end() )
@@ -55,7 +58,6 @@ int main(int argc, char *argv[])
     int high_threshold = (int)numeric_data["HighTH"];
     int low_threshold = (int)numeric_data["LowTH"];
 
-    PrintInfo(time, server_num, gamma, algo, high_threshold, low_threshold);
 
     /***************************************************
      ***************** initializing ********************
@@ -87,9 +89,33 @@ int main(int argc, char *argv[])
         buffer = JBuffer(1001, server_num);                             // deafulting buffer, not affecting simulator
     }
 
+    unsigned long long total_queued_jobs = 0;
+
+    /***************************************************
+    **************** define output *********************
+    ***************************************************/
+
+    string name = "./../results/";
+    name += "Servers-"+verbal_data["Servers"]+"-"+verbal_data["Algorithm"]+"-Load-"+to_string(numeric_data["Load"])+"-Buffer-Low="+to_string(low_threshold)+"-High="+to_string(high_threshold);
+
+    ofstream sim_print;
+    sim_print.open(name+"_print.log");
+
+    ofstream sim_val;
+    sim_val.open (name+"_values.log");
+
+    //std::cout.rdbuf(sim_print.rdbuf()); //redirect std::cout to out.txt!
+
+    if (not (sim_val.is_open() && sim_print.is_open())) {
+        cout << "-E- output was not correctly set" << endl;
+        exit(1);
+    }
+
     /***************************************************
      ****************** main loop **********************
      ***************************************************/
+
+    PrintInfo(time, server_num, gamma, algo, high_threshold, low_threshold);
 
     for (int t = 0; t < time; t++) {
         int arrivals = dispatcher->get_arrivals();                        // get arrivals
@@ -118,7 +144,7 @@ int main(int argc, char *argv[])
                 if( returnToRoute ){
                     assert( buffer_exist && "-W- Assert, returnToRoute : buffer dosen't exist but enter buffer condition" );
                     while ( buffer.GetQueuedJobs() ) {
-                        Job returned_job = buffer.SendJob(time, destination);
+                        Job returned_job = buffer.SendJob(t, destination);
                         servers[destination]->AddJob(returned_job);
                         if(algo == "RoundRobin") {
                             dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
@@ -149,6 +175,15 @@ int main(int argc, char *argv[])
             }
         }
 
+        /***************************************************
+         **************** sample states  *******************
+         ***************************************************/
+         if( t % sample_rate == 0) {
+             for (int n = 0; n < server_num; n++) {
+                 total_queued_jobs += servers[n]->GetQueuedJobs();
+             }
+             sim_val << "Time: " << (total_queued_jobs+buffer.GetQueuedJobs()) / (t + 1) << " " << buffer.GetQueuedJobs() << endl;
+         }
         if( t % print_time == 0 && t > 0 ) {
             PrintServerStatus(servers, server_num, t);
             cout << buffer << endl;
@@ -169,6 +204,10 @@ int main(int argc, char *argv[])
         delete servers[n];
     }
     delete dispatcher;
+    sim_print.close();
+    sim_val.close();
+
+    return (int)total_queued_jobs/time;
 }
 
 

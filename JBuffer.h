@@ -36,7 +36,7 @@ public:
     Job SendJob(int time, int server_num);
     string toString() const ;
     friend std::ostream& operator<<(std::ostream& os, const JBuffer& s);
-    static int total_buffered_jobs;
+    static unsigned long long total_buffered_jobs;
     static unsigned long long total_waiting;
 
 

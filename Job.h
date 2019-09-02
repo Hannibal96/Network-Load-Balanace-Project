@@ -6,6 +6,8 @@
 
 #include "defs.h"
 
+using namespace std;
+
 class Job{
 public:
     Job(int time);
@@ -22,11 +24,13 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Job& s);
 
     static int number_of_jobs;
+    static map<int,pair<int,int>> jobs_completion_maps;
 
 private:
     int creation_time;
     int exiting_time;
     int waiting_time;
+    int served_time;
     int job_number;
 };
 

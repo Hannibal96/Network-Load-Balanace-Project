@@ -5,12 +5,14 @@
 #include "Job.h"
 
 int Job::number_of_jobs = 0;
+map<int,pair<int,int>> Job::jobs_completion_maps = map<int,pair<int,int>>();
 
 Job::Job(int time)
 {
     creation_time = time;
     waiting_time = 0;
-    exiting_time = 0;
+    exiting_time = -1;
+    served_time = -1;
     number_of_jobs++;
     job_number = number_of_jobs;
 }
@@ -24,7 +26,12 @@ int Job::SetWaiting(int time) {
 int Job::FinishJob(int time)
 {
     exiting_time = time;
-    return exiting_time - creation_time;
+    served_time = exiting_time - creation_time;
+    jobs_completion_maps[job_number] = pair<int,int>(waiting_time,served_time);
+    assert(waiting_time >= 0 && "-W- Assert, Job::SetWaiting job waiting time is negative" );
+    assert(served_time >= 0 && "-W- Assert, Job::SetWaiting job waiting time is negative" );
+    assert(served_time >= waiting_time && "-W- Assert, Job::SetWaiting job waiting time is negative" );
+    return served_time;
 }
 
 string Job::toString() const
