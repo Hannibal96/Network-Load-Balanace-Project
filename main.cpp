@@ -6,6 +6,7 @@
 #include "Dispacher.h"
 #include "Job.h"
 #include "JBuffer.h"
+#include <iomanip>
 
 using namespace std;
 
@@ -15,7 +16,7 @@ using namespace std;
 
 void PrintServerStatus(Server** servers, int server_num, int t);
 void PrintEndSimulation(Server** servers, int server_num, Dispatcher &dispatcher, JBuffer &buffer);
-void PrintInfo(int time, int servers_num, double gamma, string algo, int HighTH, int LowTH);
+void PrintInfo(int sim_time, int servers_num, double gamma, string algo, int HighTH, int LowTH);
 void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, map<string, string>& verbal_data);
 double InitServersAndGetGamma(string servers_verb, double *server_rate, int servers_num, double load);
 
@@ -29,8 +30,8 @@ int main(int argc, char *argv[])
     map<string, double > numeric_data;
     map<string, string> verbal_data;
     ParseArguments(argc, argv, numeric_data, verbal_data);
-    int server_num = (int)numeric_data["Servers"], time = (int)numeric_data["Time"];
-    int sample_rate = time/(1000000);
+    int server_num = (int)numeric_data["Servers"], sim_time = (int)numeric_data["Time"];
+    int sample_rate = sim_time/(1000000);
     if(sample_rate == 0)
         sample_rate = 1;
 
@@ -115,12 +116,12 @@ int main(int argc, char *argv[])
      ****************** main loop **********************
      ***************************************************/
 
-    PrintInfo(time, server_num, gamma, algo, high_threshold, low_threshold);
+    PrintInfo(sim_time, server_num, gamma, algo, high_threshold, low_threshold);
 
-    for (int t = 0; t < time; t++) {
+    for (int curr_time = 1; curr_time <= sim_time; curr_time++) {
         int arrivals = dispatcher->get_arrivals();                        // get arrivals
         for(int a=0; a<arrivals ; a++){                                   // send to destinations
-            Job job = Job(t);
+            Job job = Job(curr_time);
             int destination = -1;
             if(algo == "POC"){
                 assert(POC != -1 && "-W- Assert, main loop : POC was not initialized" );
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
                 if( returnToRoute ){
                     assert( buffer_exist && "-W- Assert, returnToRoute : buffer dosen't exist but enter buffer condition" );
                     while ( buffer.GetQueuedJobs() ) {
-                        Job returned_job = buffer.SendJob(t, destination);
+                        Job returned_job = buffer.SendJob(curr_time, destination);
                         servers[destination]->AddJob(returned_job);
                         if(algo == "RoundRobin") {
                             dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
@@ -166,7 +167,7 @@ int main(int argc, char *argv[])
         }
 
         for(int n=0; n<server_num; n++) {                                   // serve jobs and update dispatcher information
-            pair<int, bool> finished_jobs = servers[n]->FinishJob(t);
+            pair<int, bool> finished_jobs = servers[n]->FinishJob(curr_time);
             if(algo == "JSQ") {
                 dynamic_cast<JsqDispatcher *>(dispatcher)->update_server_finish(n, finished_jobs.first);
             }
@@ -178,14 +179,18 @@ int main(int argc, char *argv[])
         /***************************************************
          **************** sample states  *******************
          ***************************************************/
-         if( t % sample_rate == 0) {
+         if( curr_time % sample_rate == 0) {
              for (int n = 0; n < server_num; n++) {
                  total_queued_jobs += servers[n]->GetQueuedJobs();
              }
-             sim_val << "Time: " << (total_queued_jobs+buffer.GetQueuedJobs()) / (t + 1) << " " << buffer.GetQueuedJobs() << endl;
+             sim_val <<
+                "Time: " << curr_time <<
+                " ,Avg-serving: " << std::fixed << std::setprecision(2) << (double)Server::total_serving_time/(Server::total_served_jobs+1)<<
+                " ,Convegance-value: " << (total_queued_jobs + JBuffer::total_buffered_jobs) / curr_time <<
+                " ,Buffer-size: " << buffer.GetQueuedJobs() << endl;
          }
-        if( t % print_time == 0 && t > 0 ) {
-            PrintServerStatus(servers, server_num, t);
+        if( curr_time % print_time == 0 ) {
+            PrintServerStatus(servers, server_num, curr_time);
             cout << buffer << endl;
         }
     }
@@ -207,7 +212,7 @@ int main(int argc, char *argv[])
     sim_print.close();
     sim_val.close();
 
-    return (int)total_queued_jobs/time;
+    return 0;
 }
 
 
@@ -246,7 +251,7 @@ void PrintEndSimulation(Server** servers, int server_num , Dispatcher &dispatche
     cout << "======================" << endl;
 }
 
-void PrintInfo(int time, int servers_num, double gamma, string algo, int HighTH, int LowTH)
+void PrintInfo(int sim_time, int servers_num, double gamma, string algo, int HighTH, int LowTH)
 {
     cout << "***************************************************" << endl
          << "*********** Stating simulation with ***************" << endl
@@ -258,7 +263,7 @@ void PrintInfo(int time, int servers_num, double gamma, string algo, int HighTH,
         cout << "--- no buffer in usage" << endl;
     else
         cout << "--- with buffer configurations of: " << HighTH << " high threshold, and " << LowTH << " low threshold" << endl;
-    cout << "--- for " << time << " time units" << endl;
+    cout << "--- for " << sim_time << " time units" << endl;
 }
 
 void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, map<string, string>& verbal_data)
