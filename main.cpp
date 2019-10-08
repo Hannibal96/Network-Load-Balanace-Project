@@ -8,6 +8,8 @@
 #include "JBuffer.h"
 #include <iomanip>
 
+#define VEC_SIZE 1000000
+
 using namespace std;
 
 /***************************************************
@@ -31,7 +33,7 @@ int main(int argc, char *argv[])
     map<string, string> verbal_data;
     ParseArguments(argc, argv, numeric_data, verbal_data);
     int server_num = (int)numeric_data["Servers"], sim_time = (int)numeric_data["Time"];
-    int sample_rate = sim_time/(1000000);
+    int sample_rate = sim_time/(VEC_SIZE);
     if(sample_rate == 0)
         sample_rate = 1;
 
@@ -91,6 +93,7 @@ int main(int argc, char *argv[])
     }
 
     unsigned long long total_queued_jobs = 0;
+    unsigned long long total_buffered_jobs_overtime = 0;
 
     /***************************************************
     **************** define output *********************
@@ -179,16 +182,17 @@ int main(int argc, char *argv[])
         /***************************************************
          **************** sample states  *******************
          ***************************************************/
-         if( curr_time % sample_rate == 0) {
-             for (int n = 0; n < server_num; n++) {
-                 total_queued_jobs += servers[n]->GetQueuedJobs();
-             }
+        for (int n = 0; n < server_num; n++) {
+            total_queued_jobs += servers[n]->GetQueuedJobs();
+            total_buffered_jobs_overtime += JBuffer::total_buffered_jobs;
+        }
+        if( curr_time % sample_rate == 0 || curr_time == 0) {
              sim_val <<
-                "Time: " << curr_time <<
-                " ,Avg-serving: " << std::fixed << std::setprecision(2) << (double)Server::total_serving_time/(Server::total_served_jobs+1)<<
-                " ,Convegance-value: " << (total_queued_jobs + JBuffer::total_buffered_jobs) / curr_time <<
-                " ,Buffer-size: " << buffer.GetQueuedJobs() << endl;
-         }
+                " " << curr_time <<
+                " " << Server::total_serving_time/(Server::total_served_jobs+1)<<
+                " " << (total_queued_jobs + total_buffered_jobs_overtime)/curr_time  <<
+                " " << buffer.GetQueuedJobs() << endl;
+        }
         if( curr_time % print_time == 0 ) {
             PrintServerStatus(servers, server_num, curr_time);
             cout << buffer << endl;
@@ -325,7 +329,7 @@ double InitServersAndGetGamma(string servers_verb, double *server_rate, int serv
 {
     double total_serving_rates = 0.0;
     int offset = 0 ;
-    string delimiter = ";", inner_delimiter = ",";
+    string delimiter = ",", inner_delimiter = "x";
     size_t pos = 0;
     size_t sub_pos = 0;
     std::string token_dual;
