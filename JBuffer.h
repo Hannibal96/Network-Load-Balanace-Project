@@ -24,6 +24,7 @@ public:
         this->buffer_max = buffer_max;
         this->high_threshold = high_threshold;
         this->low_threshold = low_threshold;
+        this->maximal_queue = 0;
     };
 
     ~JBuffer() = default;
@@ -32,6 +33,7 @@ public:
     bool CheckReturnToRoute(Server& server);
 
     int GetQueuedJobs();
+    int GetMaximalQueue();
 
     Job SendJob(int time, int server_num);
     string toString() const ;
@@ -41,7 +43,7 @@ public:
 
 
 protected:
-    int id, jobs_in_buffer, buffer_max, high_threshold, low_threshold;
+    int id, jobs_in_buffer, buffer_max, high_threshold, low_threshold, maximal_queue;
     queue<Job> jobs_queue;
     map<int,int> buffer_routing_map;
 };

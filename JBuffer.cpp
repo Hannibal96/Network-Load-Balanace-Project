@@ -17,6 +17,8 @@ void JBuffer::AddJob(Job job)
     jobs_queue.push(job);
     jobs_in_buffer ++ ;
     total_buffered_jobs ++;
+    if(jobs_in_buffer > maximal_queue)
+        maximal_queue = jobs_in_buffer;
 }
 
 
@@ -52,6 +54,8 @@ Job JBuffer::SendJob(int time, int server_num)
 }
 
 int JBuffer::GetQueuedJobs(){    return jobs_in_buffer;  }
+
+int JBuffer::GetMaximalQueue(){    return maximal_queue;  }
 
 string JBuffer::toString() const
 {

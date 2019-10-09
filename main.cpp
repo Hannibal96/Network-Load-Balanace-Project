@@ -41,9 +41,6 @@ int main(int argc, char *argv[])
     if ( numeric_data.find("PrintTime") != numeric_data.end() )
         print_time = (int)numeric_data["PrintTime"];
 
-    double server_rate[ server_num ];
-    double gamma = InitServersAndGetGamma(verbal_data["Servers"], server_rate, server_num, numeric_data["Load"]);
-
     string algo = verbal_data["Algorithm"];
     int POC = -1;
     if ( algo == "POC" ) {
@@ -61,46 +58,15 @@ int main(int argc, char *argv[])
     int high_threshold = (int)numeric_data["HighTH"];
     int low_threshold = (int)numeric_data["LowTH"];
 
-
-    /***************************************************
-     ***************** initializing ********************
-     ***************************************************/
-    Dispatcher *dispatcher;
-    if(algo == "Random")          dispatcher = new Dispatcher(0, server_num, gamma);
-    else if(algo == "RoundRobin") dispatcher = new RrDispatcher(0, server_num, gamma);
-    else if(algo=="POC")          dispatcher = new PocDispatcher(0,server_num,gamma);
-    else if(algo == "JSQ")        dispatcher = new JsqDispatcher(0, server_num, gamma);
-    else if(algo == "JIQ")        dispatcher = new JiqDispatcher(0, server_num, gamma);
-    else if (algo == "PI")        dispatcher = new PiDispatcher(0, server_num, gamma);
-    else if (algo == "Optimal")   dispatcher = new OptDispatcher(0, server_num, gamma);
-    else{
-        cout << "-E- Worng algorithm " << endl;
-        exit(1);
-    }
-
-    Server** servers = new Server*[server_num];
-    for(int n=0; n<server_num; n++){
-        servers[n] = new Server(n, server_rate[n]);
-    }
-
-    JBuffer buffer;
-    bool buffer_exist = not (high_threshold == low_threshold && high_threshold == 0);
-    if(buffer_exist) {
-        buffer = JBuffer(1001, server_num, high_threshold, low_threshold);
-    }
-    else {
-        buffer = JBuffer(1001, server_num);                             // deafulting buffer, not affecting simulator
-    }
-
-    unsigned long long total_queued_jobs = 0;
-    unsigned long long total_buffered_jobs_overtime = 0;
-
     /***************************************************
     **************** define output *********************
     ***************************************************/
 
     string name = "./../results/";
-    name += "Servers-"+verbal_data["Servers"]+"-"+verbal_data["Algorithm"]+"-Load-"+to_string(numeric_data["Load"])+"-Buffer-Low="+to_string(low_threshold)+"-High="+to_string(high_threshold);
+    name += "Servers-"+verbal_data["Servers"]+"-"+verbal_data["Algorithm"]+"_"+to_string((int)numeric_data["POC"])+
+            "-Load-"+(verbal_data["Load"])+
+            "-Buffer-Low="+to_string(low_threshold)+"-High="+to_string(high_threshold)+
+            "-Time-"+to_string(sim_time);
 
     ofstream sim_print;
     sim_print.open(name+"_print.log");
@@ -115,104 +81,170 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    /***************************************************
-     ****************** main loop **********************
-     ***************************************************/
+    vector<double> load;
+    double min_load = numeric_data["Load_Min"], max_load = numeric_data["Load_Max"], step_load = numeric_data["Load_Step"];
+    for( double i=min_load; i<=max_load+step_load/2; i = i+step_load )
+        load.push_back(i);
 
-    PrintInfo(sim_time, server_num, gamma, algo, high_threshold, low_threshold);
+    for(int i=0; i<load.size() ;i++) {
 
-    for (int curr_time = 1; curr_time <= sim_time; curr_time++) {
-        int arrivals = dispatcher->get_arrivals();                        // get arrivals
-        for(int a=0; a<arrivals ; a++){                                   // send to destinations
-            Job job = Job(curr_time);
-            int destination = -1;
-            if(algo == "POC"){
-                assert(POC != -1 && "-W- Assert, main loop : POC was not initialized" );
-                destination = dynamic_cast<PocDispatcher *>(dispatcher)->get_destination(servers, POC);
-            } else if(algo == "Optimal"){
-                destination = dynamic_cast<OptDispatcher *>(dispatcher)->get_destination(servers);
-            }
-            else{
-                destination = dispatcher->get_destination();
-            }
-            assert(destination != -1 && "-W- Assert, main loop : destination was not initialized" );
+        double curr_load = load[i];
 
-            bool reRoute = buffer.CheckReRoute( *servers[destination] );
-            if( reRoute ){                                                     // buffer related routing
-                assert( buffer_exist && "-W- Assert, ReRoute : buffer dosen't exist but enter buffer condition" );
-                dispatcher->update_routing_table(-1);
-                buffer.AddJob(job);
-            }
-            else{                                                             // regular routing
-                bool returnToRoute = buffer.CheckReturnToRoute( *servers[destination] );
-                if( returnToRoute ){
-                    assert( buffer_exist && "-W- Assert, returnToRoute : buffer dosen't exist but enter buffer condition" );
-                    while ( buffer.GetQueuedJobs() ) {
-                        Job returned_job = buffer.SendJob(curr_time, destination);
-                        servers[destination]->AddJob(returned_job);
-                        if(algo == "RoundRobin") {
-                            dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
-                        }
-                        else {
-                            dispatcher->update_server_route(destination);
+        /***************************************************
+         ***************** initializing ********************
+         ***************************************************/
+
+        double server_rate[server_num];
+        double gamma = InitServersAndGetGamma(verbal_data["Servers"], server_rate, server_num, curr_load);
+
+        Dispatcher *dispatcher;
+        if (algo == "Random") dispatcher = new Dispatcher(0, server_num, gamma);
+        else if (algo == "RoundRobin") dispatcher = new RrDispatcher(0, server_num, gamma);
+        else if (algo == "POC") dispatcher = new PocDispatcher(0, server_num, gamma);
+        else if (algo == "JSQ") dispatcher = new JsqDispatcher(0, server_num, gamma);
+        else if (algo == "JIQ") dispatcher = new JiqDispatcher(0, server_num, gamma);
+        else if (algo == "PI") dispatcher = new PiDispatcher(0, server_num, gamma);
+        else if (algo == "Optimal") dispatcher = new OptDispatcher(0, server_num, gamma);
+        else {
+            cout << "-E- Worng algorithm " << endl;
+            exit(1);
+        }
+
+        Server **servers = new Server *[server_num];
+        for (int n = 0; n < server_num; n++) {
+            servers[n] = new Server(n, server_rate[n]);
+        }
+
+        JBuffer buffer;
+        bool buffer_exist = not(high_threshold == low_threshold && high_threshold == 0);
+        if (buffer_exist) {
+            buffer = JBuffer(1001, server_num, high_threshold, low_threshold);
+        } else {
+            buffer = JBuffer(1001,
+                             server_num);                             // deafulting buffer, not affecting simulator
+        }
+
+        unsigned long long total_queued_jobs = 0;
+        unsigned long long total_buffered_jobs_overtime = 0;
+
+
+        /***************************************************
+         ****************** main loop **********************
+         ***************************************************/
+
+        PrintInfo(sim_time, server_num, gamma, algo, high_threshold, low_threshold);
+
+        for (int curr_time = 1; curr_time <= sim_time; curr_time++) {
+            int arrivals = dispatcher->get_arrivals();                        // get arrivals
+            for (int a = 0; a < arrivals; a++) {                                   // send to destinations
+                Job job = Job(curr_time);
+                int destination = -1;
+                if (algo == "POC") {
+                    assert(POC != -1 && "-W- Assert, main loop : POC was not initialized");
+                    destination = dynamic_cast<PocDispatcher *>(dispatcher)->get_destination(servers, POC);
+                } else if (algo == "Optimal") {
+                    destination = dynamic_cast<OptDispatcher *>(dispatcher)->get_destination(servers);
+                } else {
+                    destination = dispatcher->get_destination();
+                }
+                assert(destination != -1 && "-W- Assert, main loop : destination was not initialized");
+
+                bool reRoute = buffer.CheckReRoute(*servers[destination]);
+                if (reRoute) {                                                     // buffer related routing
+                    assert(buffer_exist && "-W- Assert, ReRoute : buffer dosen't exist but enter buffer condition");
+                    dispatcher->update_routing_table(-1);
+                    buffer.AddJob(job);
+                } else {                                                             // regular routing
+                    bool returnToRoute = buffer.CheckReturnToRoute(*servers[destination]);
+                    if (returnToRoute) {
+                        assert(buffer_exist &&
+                               "-W- Assert, returnToRoute : buffer dosen't exist but enter buffer condition");
+                        while (buffer.GetQueuedJobs()) {
+                            Job returned_job = buffer.SendJob(curr_time, destination);
+                            servers[destination]->AddJob(returned_job);
+                            if (algo == "RoundRobin") {
+                                dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
+                            } else {
+                                dispatcher->update_server_route(destination);
+                            }
                         }
                     }
+                    dispatcher->update_routing_table(destination);
+                    servers[destination]->AddJob(job);
+                    if (algo == "RoundRobin") {
+                        dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
+                    } else {
+                        dispatcher->update_server_route(destination);
+                    }
                 }
-                dispatcher->update_routing_table(destination);
-                servers[destination]->AddJob(job);
-                if(algo == "RoundRobin") {
-                    dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
+            }
+
+            for (int n = 0; n <
+                            server_num; n++) {                                   // serve jobs and update dispatcher information
+                pair<int, bool> finished_jobs = servers[n]->FinishJob(curr_time);
+                if (algo == "JSQ") {
+                    dynamic_cast<JsqDispatcher *>(dispatcher)->update_server_finish(n, finished_jobs.first);
+                } else if (algo == "JIQ" || algo == "PI") {
+                    dynamic_cast<JiqDispatcher *>(dispatcher)->update_server_finish(n, finished_jobs);
                 }
-                else {
-                    dispatcher->update_server_route(destination);
-                }
+            }
+
+            /***************************************************
+             **************** sample states  *******************
+             ***************************************************/
+            for (int n = 0; n < server_num; n++) {
+                total_queued_jobs += servers[n]->GetQueuedJobs();
+                total_buffered_jobs_overtime += JBuffer::total_buffered_jobs;
+            }
+            if (curr_time % sample_rate == 0 && load.size() == 1) {
+                sim_val <<
+                        " " << curr_time <<
+                        " " << (double)Server::total_serving_time / (Server::total_served_jobs + !(Server::total_served_jobs)) <<
+                        " " << (double)(total_queued_jobs + total_buffered_jobs_overtime) / curr_time <<
+                        " " << buffer.GetQueuedJobs() << endl;
+            }
+            if (curr_time % print_time == 0) {
+                PrintServerStatus(servers, server_num, curr_time);
+                cout << buffer << endl;
             }
         }
 
-        for(int n=0; n<server_num; n++) {                                   // serve jobs and update dispatcher information
-            pair<int, bool> finished_jobs = servers[n]->FinishJob(curr_time);
-            if(algo == "JSQ") {
-                dynamic_cast<JsqDispatcher *>(dispatcher)->update_server_finish(n, finished_jobs.first);
-            }
-            else if(algo == "JIQ" || algo == "PI") {
-                dynamic_cast<JiqDispatcher *>(dispatcher)->update_server_finish(n, finished_jobs);
-            }
+        if ( load.size() > 1 ) {
+            sim_val <<
+                    " " << curr_load <<
+                    " " << (double)Server::total_serving_time / (Server::total_served_jobs + !(Server::total_served_jobs)) <<
+                    " " << (double)(total_queued_jobs + total_buffered_jobs_overtime) / sim_time <<
+                    " " << buffer.GetMaximalQueue() << endl;
         }
 
         /***************************************************
-         **************** sample states  *******************
+         ***************** conclusions  ********************
          ***************************************************/
+
+        PrintEndSimulation(servers, server_num, *dispatcher, buffer);
+
+        /***************************************************
+         ******************** Free  ************************
+         ***************************************************/
+
         for (int n = 0; n < server_num; n++) {
-            total_queued_jobs += servers[n]->GetQueuedJobs();
-            total_buffered_jobs_overtime += JBuffer::total_buffered_jobs;
+            delete servers[n];
         }
-        if( curr_time % sample_rate == 0 || curr_time == 0) {
-             sim_val <<
-                " " << curr_time <<
-                " " << Server::total_serving_time/(Server::total_served_jobs+1)<<
-                " " << (total_queued_jobs + total_buffered_jobs_overtime)/curr_time  <<
-                " " << buffer.GetQueuedJobs() << endl;
+        delete dispatcher;
+
+        if ( load.size() > 1){
+            Server::total_serving_time = 0;
+            Server::total_served_jobs = 0;
+            JBuffer::total_buffered_jobs = 0;
+            JBuffer::total_waiting = 0;
+            Job::number_of_jobs = 0;
+            Job::jobs_completion_maps = map<int,pair<int,int>>();
+            Dispatcher::total_dispatched_jobs = 0;
         }
-        if( curr_time % print_time == 0 ) {
-            PrintServerStatus(servers, server_num, curr_time);
-            cout << buffer << endl;
-        }
+
     }
 
-    /***************************************************
-     ***************** conclusions  ********************
-     ***************************************************/
 
-    PrintEndSimulation(servers, server_num, *dispatcher , buffer);
-
-    /***************************************************
-     ******************** Free  ************************
-     ***************************************************/
-
-    for(int n=0; n<server_num; n++){
-        delete servers[n];
-    }
-    delete dispatcher;
     sim_print.close();
     sim_val.close();
 
@@ -291,7 +323,25 @@ void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, 
                 numeric_data["POC"] = atoi(argv[++i]);
         }
         else if(converted_arg == "--Load") {
-            numeric_data["Load"] = stod(argv[++i]);
+            verbal_data["Load"] = argv[++i];
+
+            string a = verbal_data["Load"];
+            a.erase(0,1);
+            size_t pos = a.find(",");
+            string min = a.substr(0, pos);
+            a.erase(0, pos + 1);
+
+            pos = a.find(",");
+            string max = a.substr(0, pos);
+            a.erase(0, pos + 1);
+
+            pos = a.find("}");
+            string step = a.substr(0, pos);
+            a.erase(0, pos + 1);
+
+            numeric_data["Load_Min"] = stod(min);
+            numeric_data["Load_Max"] = stod(max);
+            numeric_data["Load_Step"] = stod(step);
         }
         else if(converted_arg == "--Buffer") {              // Likewise
             numeric_data["Buffer"] = atoi(argv[++i]);
@@ -315,7 +365,9 @@ void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, 
         }
         else if(converted_arg == "--Help"){
             cout << "-Help message:" << endl;
-            cout << "--Example: \n\t--Servers 10 5,1;5,10; --Dispatchers 1 JSQ --Time 100000 --Load 0.8 --Buffer 1 --LowTH 10 --HighTH 1000" << endl;
+            cout << "--Example: \n\t"
+                    "--Servers 25 10x0.1,10x0.2,5x0.5, --Dispatchers 1 POC 2 --Time 1000000 --Load {0.5,1.0,0.025}"
+                    << endl;
             exit(0);
         }
         else {
