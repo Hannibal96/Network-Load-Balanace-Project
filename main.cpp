@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     ***************************************************/
 
     string name = "./../results/";
-    name += "Servers-"+verbal_data["Servers"]+"-"+verbal_data["Algorithm"]+"_"+to_string((int)numeric_data["POC"])+
+    name += "Servers-"+verbal_data["Servers"]+"-"+verbal_data["Algorithm"]+"-"+to_string((int)numeric_data["POC"])+
             "-Load-"+(verbal_data["Load"])+
             "-Buffer-Low="+to_string(low_threshold)+"-High="+to_string(high_threshold)+
             "-Time-"+to_string(sim_time);
