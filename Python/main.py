@@ -8,9 +8,11 @@ import numpy as np
 
 files = os.listdir("./../results/")
 
-
 for file_name in files:
-    if (not file_name.endswith(".log")) or file_name.endswith("print.log"):
+    if not file_name.endswith("_values.log"):
+        continue
+
+    if (file_name[:-11]+"_Convergance.png") in files:
         continue
 
     short_file_name = file_name

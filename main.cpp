@@ -155,10 +155,20 @@ int main(int argc, char *argv[])
                     dispatcher->update_routing_table(-1);
                     buffer.AddJob(job);
                 } else {                                                             // regular routing
+
+                    // LowTH
+
                     bool returnToRoute = buffer.CheckReturnToRoute(*servers[destination]);
+
+                    //LowTH
+
                     if (returnToRoute) {
                         assert(buffer_exist &&
                                "-W- Assert, returnToRoute : buffer dosen't exist but enter buffer condition");
+
+
+                        //test based on policy
+
                         while (buffer.GetQueuedJobs()) {
                             Job returned_job = buffer.SendJob(curr_time, destination);
                             servers[destination]->AddJob(returned_job);
@@ -168,6 +178,11 @@ int main(int argc, char *argv[])
                                 dispatcher->update_server_route(destination);
                             }
                         }
+
+                        //test based on policy
+
+
+
                     }
                     dispatcher->update_routing_table(destination);
                     servers[destination]->AddJob(job);
@@ -179,8 +194,7 @@ int main(int argc, char *argv[])
                 }
             }
 
-            for (int n = 0; n <
-                            server_num; n++) {                                   // serve jobs and update dispatcher information
+            for (int n = 0; n < server_num; n++) {                                   // serve jobs and update dispatcher information
                 pair<int, bool> finished_jobs = servers[n]->FinishJob(curr_time);
                 if (algo == "JSQ") {
                     dynamic_cast<JsqDispatcher *>(dispatcher)->update_server_finish(n, finished_jobs.first);
@@ -351,7 +365,7 @@ void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, 
                 numeric_data["LowTH"] = atoi(argv[++i]);
             }
             else {
-                cout << "-E- Wrong Buffer argument and/or order" << endl;
+                cout << "-E- Wrong LowTH Buffer argument and/or order" << endl;
                 exit(1);
             }
             converted_arg = argv[++i];
@@ -359,9 +373,20 @@ void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, 
                 numeric_data["HighTH"] = atoi(argv[++i]);
             }
             else {
-                cout << "-E- Wrong Buffer argument and/or order" << endl;
+                cout << "-E- Wrong HighTH Buffer argument and/or order" << endl;
                 exit(1);
             }
+            if(converted_arg == "--Jester" || converted_arg == "--WaterBoarding" ||
+                converted_arg == "--Victim"){
+                verbal_data["Policy"] = argv[++i];
+            }
+            else if(numeric_data["HighTH"] != 0) {
+                cout << "-E- Wrong Policy Buffer argument and/or order" << endl;
+                exit(1);
+            } else{
+                verbal_data["Policy"] = "Deafault";
+            }
+
         }
         else if(converted_arg == "--Help"){
             cout << "-Help message:" << endl;

@@ -14,7 +14,8 @@ class JBuffer {
 public:
 
     JBuffer() = default;
-    JBuffer(int id, int servers_num,int high_threshold = std::numeric_limits<int>::max() ,int low_threshold = -1, int buffer_max = std::numeric_limits<int>::max() )
+    JBuffer(int id, int servers_num,int high_threshold = std::numeric_limits<int>::max() ,int low_threshold = -1,
+            int buffer_max = std::numeric_limits<int>::max(), const string& policy = "Victim")
     {
         this->id = id;
         this->jobs_in_buffer = 0;
@@ -25,6 +26,7 @@ public:
         this->high_threshold = high_threshold;
         this->low_threshold = low_threshold;
         this->maximal_queue = 0;
+        this->policy = policy;
     };
 
     ~JBuffer() = default;
@@ -46,6 +48,7 @@ protected:
     int id, jobs_in_buffer, buffer_max, high_threshold, low_threshold, maximal_queue;
     queue<Job> jobs_queue;
     map<int,int> buffer_routing_map;
+    string policy;
 };
 
 #endif //NETWORKSIMULATOR_JBUFFER_H
