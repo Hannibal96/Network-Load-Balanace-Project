@@ -15,7 +15,7 @@ public:
 
     JBuffer() = default;
     JBuffer(int id, int servers_num,int high_threshold = std::numeric_limits<int>::max() ,int low_threshold = -1,
-            int buffer_max = std::numeric_limits<int>::max(), const string& policy = "Victim")
+            const string& policy = "Victim", int buffer_max = std::numeric_limits<int>::max())
     {
         this->id = id;
         this->jobs_in_buffer = 0;
@@ -36,6 +36,7 @@ public:
 
     int GetQueuedJobs();
     int GetMaximalQueue();
+    string GetPolicy();
 
     Job SendJob(int time, int server_num);
     string toString() const ;

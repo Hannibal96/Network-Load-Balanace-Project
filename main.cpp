@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
     name += "Servers-"+verbal_data["Servers"]+"-"+verbal_data["Algorithm"]+"-"+to_string((int)numeric_data["POC"])+
             "-Load-"+(verbal_data["Load"])+
             "-Buffer-Low="+to_string(low_threshold)+"-High="+to_string(high_threshold)+
+            "-Policy="+verbal_data["Policy"]+"-"+to_string((int)numeric_data["Policy"])+
             "-Time-"+to_string(sim_time);
 
     ofstream sim_print;
@@ -118,7 +119,7 @@ int main(int argc, char *argv[])
         JBuffer buffer;
         bool buffer_exist = not(high_threshold == low_threshold && high_threshold == 0);
         if (buffer_exist) {
-            buffer = JBuffer(1001, server_num, high_threshold, low_threshold);
+            buffer = JBuffer(1001, server_num, high_threshold, low_threshold, verbal_data["Policy"]);
         } else {
             buffer = JBuffer(1001,
                              server_num);                             // deafulting buffer, not affecting simulator
@@ -150,40 +151,61 @@ int main(int argc, char *argv[])
                 assert(destination != -1 && "-W- Assert, main loop : destination was not initialized");
 
                 bool reRoute = buffer.CheckReRoute(*servers[destination]);
-                if (reRoute) {                                                     // buffer related routing
+                if (reRoute) {                                                     // route to buffer
                     assert(buffer_exist && "-W- Assert, ReRoute : buffer dosen't exist but enter buffer condition");
                     dispatcher->update_routing_table(-1);
                     buffer.AddJob(job);
-                } else {                                                             // regular routing
+                }
 
+                else {                                                             // regular routing + reroute from buffer
                     // LowTH
-
                     bool returnToRoute = buffer.CheckReturnToRoute(*servers[destination]);
-
                     //LowTH
-
                     if (returnToRoute) {
                         assert(buffer_exist &&
                                "-W- Assert, returnToRoute : buffer dosen't exist but enter buffer condition");
-
-
-                        //test based on policy
-
-                        while (buffer.GetQueuedJobs()) {
-                            Job returned_job = buffer.SendJob(curr_time, destination);
-                            servers[destination]->AddJob(returned_job);
-                            if (algo == "RoundRobin") {
-                                dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
-                            } else {
-                                dispatcher->update_server_route(destination);
+                        if(buffer.GetPolicy() == "--Victim") {
+                            while (buffer.GetQueuedJobs()) {
+                                Job returned_job = buffer.SendJob(curr_time, destination);
+                                servers[destination]->AddJob(returned_job);
+                                if (algo == "RoundRobin") {
+                                    dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
+                                } else {
+                                    dispatcher->update_server_route(destination);
+                                }
                             }
                         }
 
-                        //test based on policy
-
-
-
+                        else if (buffer.GetPolicy() == "--Jester"){
+                            int jesters = (int)numeric_data["Policy"];
+                            while (buffer.GetQueuedJobs() && jesters > 0 ) {
+                                Job returned_job = buffer.SendJob(curr_time, destination);
+                                servers[destination]->AddJob(returned_job);
+                                if (algo == "RoundRobin") {
+                                    dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
+                                } else {
+                                    dispatcher->update_server_route(destination);
+                                }
+                                jesters --;
+                            }
+                        }
+                        else if(buffer.GetPolicy() == "--WaterBoarding"){
+                            int water_boarding_th = (int)numeric_data["Policy"];
+                            while (buffer.GetQueuedJobs() && servers[destination]->GetQueuedJobs() < water_boarding_th ) {
+                                Job returned_job = buffer.SendJob(curr_time, destination);
+                                servers[destination]->AddJob(returned_job);
+                                if (algo == "RoundRobin") {
+                                    dynamic_cast<RrDispatcher *>(dispatcher)->update_server_route();
+                                } else {
+                                    dispatcher->update_server_route(destination);
+                                }
+                            }
+                        }
+                        else{
+                            assert(false && "-W- Assert, ReturnToRoute : buffer's dosen't existing policy");
+                        }
                     }
+
                     dispatcher->update_routing_table(destination);
                     servers[destination]->AddJob(job);
                     if (algo == "RoundRobin") {
@@ -208,7 +230,8 @@ int main(int argc, char *argv[])
              ***************************************************/
             for (int n = 0; n < server_num; n++) {
                 total_queued_jobs += servers[n]->GetQueuedJobs();
-                total_buffered_jobs_overtime += JBuffer::total_buffered_jobs;
+                total_buffered_jobs_overtime += buffer.GetQueuedJobs();
+                //total_buffered_jobs_overtime += JBuffer::total_buffered_jobs;
             }
             if (curr_time % sample_rate == 0 && load.size() == 1) {
                 sim_val <<
@@ -358,9 +381,10 @@ void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, 
             numeric_data["Load_Step"] = stod(step);
         }
         else if(converted_arg == "--Buffer") {              // Likewise
-            numeric_data["Buffer"] = atoi(argv[++i]);
+            numeric_data["Buffers"] = atoi(argv[++i]);
             //verbal_data["Buffer"] = argv[++i];
             converted_arg = argv[++i];
+
             if( converted_arg == "--LowTH" ){
                 numeric_data["LowTH"] = atoi(argv[++i]);
             }
@@ -376,9 +400,13 @@ void ParseArguments(int argc, char *argv[], map<string, double >& numeric_data, 
                 cout << "-E- Wrong HighTH Buffer argument and/or order" << endl;
                 exit(1);
             }
+            converted_arg = argv[++i];
             if(converted_arg == "--Jester" || converted_arg == "--WaterBoarding" ||
                 converted_arg == "--Victim"){
-                verbal_data["Policy"] = argv[++i];
+                verbal_data["Policy"] = converted_arg;
+                if(converted_arg == "--WaterBoarding" || converted_arg == "--Jester"){
+                    numeric_data["Policy"] = atoi(argv[++i]);
+                }
             }
             else if(numeric_data["HighTH"] != 0) {
                 cout << "-E- Wrong Policy Buffer argument and/or order" << endl;

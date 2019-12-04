@@ -57,6 +57,8 @@ int JBuffer::GetQueuedJobs(){    return jobs_in_buffer;  }
 
 int JBuffer::GetMaximalQueue(){    return maximal_queue;  }
 
+string JBuffer::GetPolicy() { return  policy; }
+
 string JBuffer::toString() const
 {
     string buffer_print = "***************************************************\n"

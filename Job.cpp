@@ -27,10 +27,10 @@ int Job::FinishJob(int time)
 {
     exiting_time = time;
     served_time = exiting_time - creation_time;
-    jobs_completion_maps[job_number] = pair<int,int>(waiting_time,served_time);
+    //jobs_completion_maps[job_number] = pair<int,int>(waiting_time,served_time);
     assert(waiting_time >= 0 && "-W- Assert, Job::SetWaiting job waiting time is negative" );
-    assert(served_time >= 0 && "-W- Assert, Job::SetWaiting job waiting time is negative" );
-    assert(served_time >= waiting_time && "-W- Assert, Job::SetWaiting job waiting time is negative" );
+    assert(served_time >= 0 && "-W- Assert, Job::SetWaiting job serving time is negative" );
+    assert(served_time >= waiting_time && "-W- Assert, Job::SetWaiting job waiting time is bigger than serving" );
     return served_time;
 }
 
