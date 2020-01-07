@@ -14,6 +14,10 @@ int Dispatcher::get_arrivals()
     return new_arraivals;
 }
 
+map<int, int> Dispatcher::get_routing_map() {
+    return routing_map;
+}
+
 void Dispatcher::update_routing_table(int server_id) {  // id = -1 meaning buffered
     if(server_id == -1)
         bufferd_jobs ++;

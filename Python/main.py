@@ -1,10 +1,20 @@
 import matplotlib.pyplot as plt
 import os
-import sys
 import numpy as np
 
-#short_file_name = "Servers-10x0.1,10x0.2,5x0.5,-POC-2-Load-{0.5,1.0,0.025}-Buffer-Low=0-High=0-Time-1000000_values"
-#file_name = "./../results/"+short_file_name+".log"
+
+def plot_vals(x_axis, y_axis, name, Descriptor):
+    plt.plot(x_axis, y_axis)
+    plt.yticks(np.arange(0, max(y_axis), max(y_axis) / 20))
+    plt.ylabel(name)
+    if len(x_axis) > 1000:
+        plt.xlabel('Time')
+    else:
+        plt.xlabel('Load')
+    plt.title(name+"\n" + plt_title)
+    plt.grid()
+    plt.savefig("./../results/" + Descriptor + "_" + name + ".png")
+    plt.show()
 
 files = os.listdir("./../results/")
 
@@ -25,7 +35,11 @@ for file_name in files:
     avg_serving = list()
     buffer = list()
     stable = list()
-
+    server_0 = list()
+    server_1 = list()
+    server_2 = list()
+    server_3 = list()
+    server_4 = list()
     print(file_name)
 
     for idx, line in enumerate(x):
@@ -33,7 +47,14 @@ for file_name in files:
         time.append(float(splited[0]))
         avg_serving.append(float(splited[1]))
         stable.append(float(splited[2]))
-        buffer.append(int(splited[3]))
+        buffer.append(float(splited[3]))
+        """
+        server_0.append(float(splited[4]))
+        server_1.append(float(splited[5]))
+        server_2.append(float(splited[6]))
+        server_3.append(float(splited[7]))
+        server_4.append(float(splited[8]))
+        """
 
     if len(time) == 0:
         continue
@@ -42,36 +63,26 @@ for file_name in files:
     stable = np.array(stable)
     avg_serving = np.array(avg_serving)
     buffer = np.array(buffer)
+    server_0 = np.array(server_0)
+    server_1 = np.array(server_1)
+    server_2 = np.array(server_2)
+    server_3 = np.array(server_3)
+    server_4 = np.array(server_4)
 
-    plt.plot(time, stable)
-    plt.yticks(np.arange(0, max(stable), max(stable)/20))
-    plt.ylabel('Convergance')
-    if len(time) > 1000:
-        plt.xlabel('Time')
-    else:
-        plt.xlabel('Load')
-    plt.title("Convergance\n"+plt_title)
-    plt.savefig("./../results/"+descriptor+"_Convergance.png")
-    plt.show()
+    plot_vals(time, stable, 'Convergance', descriptor)
+    plot_vals(time, buffer, 'Buffer size', descriptor)
+    plot_vals(time, avg_serving, 'Average serving', descriptor)
 
-    plt.plot(time, buffer)
-    plt.yticks(np.arange(0, max(buffer), max(buffer)/20 + int(not(max(buffer)/20))))
-    plt.title("Buffer Size\n"+plt_title)
-    plt.ylabel('Buffer size')
-    if len(time) > 1000:
-        plt.xlabel('Time')
-    else:
-        plt.xlabel('Load')
-    plt.savefig("./../results/"+descriptor+"_Buffer.png")
-    plt.show()
+    print(buffer.max())
+    print(buffer.mean())
 
-    plt.plot(time, avg_serving)
-    plt.yticks(np.arange(0, max(avg_serving), max(avg_serving)/20))
-    plt.ylabel('Average serving')
-    if len(time) > 1000:
-        plt.xlabel('Time')
-    else:
-        plt.xlabel('Load')
-    plt.title("Avg Serving\n"+plt_title)
-    plt.savefig("./../results/"+descriptor+"_Serving.png")
-    plt.show()
+    #plot_vals(time, server_0, 'Serer0-incoming', descriptor)
+    #plot_vals(time, server_1, 'Serer1-incoming', descriptor)
+    #plot_vals(time, server_2, 'Serer2-incoming', descriptor)
+    #plot_vals(time, server_3, 'Serer3-incoming', descriptor)
+    #plot_vals(time, server_4, 'Serer4-incoming', descriptor)
+
+
+
+
+

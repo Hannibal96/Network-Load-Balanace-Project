@@ -33,6 +33,7 @@ public:
     void update_routing_table(int server_id);
     virtual void update_server_route(int destination);
     string toString() const ;
+    map<int, int> get_routing_map();
     friend std::ostream& operator<<(std::ostream& os, const Dispatcher& s);
 
     static int total_dispatched_jobs;

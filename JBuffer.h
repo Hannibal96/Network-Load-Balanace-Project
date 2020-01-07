@@ -36,6 +36,9 @@ public:
 
     int GetQueuedJobs();
     int GetMaximalQueue();
+
+    map<int, int> get_routing_table();
+
     string GetPolicy();
 
     Job SendJob(int time, int server_num);

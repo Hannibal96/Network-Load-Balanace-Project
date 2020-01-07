@@ -155,6 +155,7 @@ int main(int argc, char *argv[])
                     assert(buffer_exist && "-W- Assert, ReRoute : buffer dosen't exist but enter buffer condition");
                     dispatcher->update_routing_table(-1);
                     buffer.AddJob(job);
+
                 }
 
                 else {                                                             // regular routing + reroute from buffer
@@ -238,7 +239,13 @@ int main(int argc, char *argv[])
                         " " << curr_time <<
                         " " << (double)Server::total_serving_time / (Server::total_served_jobs + !(Server::total_served_jobs)) <<
                         " " << (double)(total_queued_jobs + total_buffered_jobs_overtime) / curr_time <<
-                        " " << buffer.GetQueuedJobs() << endl;
+                        " " << buffer.GetQueuedJobs() <<
+                       /* " " << (double)(dispatcher->get_routing_map()[0] + buffer.get_routing_table()[0]) / curr_time <<
+                        " " << (double)(dispatcher->get_routing_map()[1] + buffer.get_routing_table()[1]) / curr_time <<
+                        " " << (double)(dispatcher->get_routing_map()[2] + buffer.get_routing_table()[2]) / curr_time <<
+                        " " << (double)(dispatcher->get_routing_map()[3] + buffer.get_routing_table()[3]) / curr_time <<
+                        " " << (double)(dispatcher->get_routing_map()[4] + buffer.get_routing_table()[4]) / curr_time << */
+                        endl;
             }
             if (curr_time % print_time == 0) {
                 PrintServerStatus(servers, server_num, curr_time);

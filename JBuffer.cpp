@@ -59,6 +59,10 @@ int JBuffer::GetMaximalQueue(){    return maximal_queue;  }
 
 string JBuffer::GetPolicy() { return  policy; }
 
+map<int,int> JBuffer::get_routing_table() {
+    return buffer_routing_map;
+}
+
 string JBuffer::toString() const
 {
     string buffer_print = "***************************************************\n"
